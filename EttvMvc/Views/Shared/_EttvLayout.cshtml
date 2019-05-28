@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="ViewPort" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>@ViewBag.Title</title>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/EttvTemplate/")css/style.css" />
+    <style>
+        #progressBar {
+            width: 660px;
+            height: 6px;
+            background-color: var(--primary-color);
+            display: none;
+            margin-top: 1px;
+        }
+
+        #progressBar div {
+            height: 100%;
+            width: 0;
+            background-color: var(--light-color);
+        }
+    </style>
+</head>
+<body>
+
+    @RenderPage("~/Views/Shared/_Header.cshtml")
+
+    <div>
+        @RenderBody()
+    </div>
+
+    @RenderPage("~/Views/Shared/_Footer.cshtml")
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <script src="@Url.Content("~/Content/EttvTemplate/")js/index.js"></script>
+    <script src="@Url.Content("~/Content/EttvTemplate/")js/YTPlayer.js"></script>
+</body>
+</html>

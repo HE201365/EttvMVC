@@ -1,0 +1,35 @@
+﻿@using EttvMvc.Helps
+<header class="showcase">
+    <div class="showcase-top">
+        <img src="@Url.Content("~/Content/EttvTemplate/")img/EttvLogo.png" alt="Ettv" />
+        @if (UserSession.CurrentUser==null)
+        {
+            @Html.ActionLink("Sign In", "Index", "User", new object {}, new {@class = "button button-rounded"});
+        }
+        else
+        {
+            @Html.ActionLink("Back to management", "Index", "Channel", new { area = "Admin" }, new {@class = "button button-rounded"});
+        }
+        
+    </div>
+    <div class="showcase-content">
+        @*<iframe width="660" height="315" src="https://www.youtube.com/embed/SJ5oQFQTzb4" frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>*@
+        <div class="now_playing">
+
+            <div class="n_p_video_container">
+                <div class="n_p_video_play"></div>
+                <div id="ytplayer"></div>
+            </div>
+
+            <div class="n_p_video_progressbar">
+                <div id="progressBar">
+                    <div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</header>
