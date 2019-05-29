@@ -146,14 +146,13 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\EttvTemplate\css\style.css" />
-    <Content Include="Content\EttvTemplate\img\background.jpg" />
     <Content Include="Content\EttvTemplate\img\EttvLogo.png" />
-    <Content Include="Content\EttvTemplate\img\logo.png" />
     <Content Include="Content\EttvTemplate\img\tabb-content-1.png" />
     <Content Include="Content\EttvTemplate\img\tabb-content-2-1.png" />
     <Content Include="Content\EttvTemplate\img\tabb-content-2-2.png" />
     <Content Include="Content\EttvTemplate\img\tabb-content-2-3.png" />
     <Content Include="Content\EttvTemplate\img\uyghur-maps-Uighur-Map-East-Turkistan-Herite-Dogu-Turkestan.png" />
+    <Content Include="Content\EttvTemplate\img\world_with_tibet.jpg" />
     <Content Include="Content\EttvTemplate\js\index.js" />
     <Content Include="Content\EttvTemplate\js\YTPlayer.js" />
     <Content Include="favicon.ico" />

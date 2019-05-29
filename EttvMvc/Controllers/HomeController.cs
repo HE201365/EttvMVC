@@ -11,7 +11,8 @@ namespace EttvMvc.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            List<ChannelProgram> chp = ChannelProgram.GetAll();
+            return View(chp);
         }
 
         public JsonResult GetIndexContentJsonResult()

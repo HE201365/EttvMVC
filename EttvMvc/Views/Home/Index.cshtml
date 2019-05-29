@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<EttvMvc.Models.ChannelProgram>
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_EttvLayout.cshtml";
@@ -8,7 +8,7 @@
     <div class="cntnr">
         <div id="tab-1" class="tab-item tab-border">
             <i class="fas fa-door-open fa-3x"></i>
-            <p class="hide-sm">Cancel at any time</p>
+            <p class="hide-sm">East-Turkistan Television</p>
         </div>
         <div id="tab-2" class="tab-item">
             <i class="fas fa-tablet-alt fa-3x"></i>
@@ -16,7 +16,7 @@
         </div>
         <div id="tab-3" class="tab-item">
             <i class="fas fa-tags fa-3x"></i>
-            <p class="hide-sm">Pick your price</p>
+            <p class="hide-sm">Check your Program</p>
         </div>
     </div>
 </section>
@@ -28,12 +28,10 @@
             <div class="tab-1-content-inner">
                 <div>
                     <p class="text-lg">
-                        If you decide Netflix isn't for you - no problem. No commitment.
-                        Cancel online anytime.
+                        Watch your TV program All Around The World in your timezone !
                     </p>
-                    <a href="#" class="button button-lg">Watch Free For 30 Days</a>
                 </div>
-                <img src="@Url.Content("~/Content/EttvTemplate/")img/tabb-content-1.png" alt="" />
+                <img src="@Url.Content("~/Content/EttvTemplate/")img/world_with_tibet.jpg" alt="" />
             </div>
         </div>
 
@@ -41,10 +39,9 @@
         <div id="tab-2-content" class="tabb-content-item">
             <div class="tab-2-content-top">
                 <p class="text-lg">
-                    Watch TV shows and movies anytime, anywhere — personalized for
+                    Watch TV anywhere — personalized for
                     you.
                 </p>
-                <a href="#" class="button button-lg">Watch Free For 30 Days</a>
             </div>
             <div class="tab-2-content-bottom">
                 <div>
@@ -82,69 +79,28 @@
         <div id="tab-3-content" class="tabb-content-item">
             <div class="text-center">
                 <p class="text-lg">
-                    Choose one plan and watch everything on Netflix.
+                    Program list is here. Follow your Program in ETTV.
                 </p>
-                <a href="#" class="button button-lg">Watch Free For 30 Days</a>
             </div>
 
             <table class="tbl">
                 <thead>
                     <tr>
-                        <th></th>
-                        <th>Basic</th>
-                        <th>Standard</th>
-                        <th>Premium</th>
+                        <th>program</th>
+                        <th>time</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Monthly price after free month ends on 6/19/19</td>
-                        <td>$8.99</td>
-                        <td>$12.99</td>
-                        <td>$15.99</td>
-                    </tr>
-                    <tr>
-                        <td>HD Available</td>
-                        <td><i class="fas fa-times"></i></td>
-                        <td><i class="fas fa-check"></i></td>
-                        <td><i class="fas fa-check"></i></td>
-                    </tr>
-                    <tr>
-                        <td>Ultra HD Available</td>
-                        <td><i class="fas fa-times"></i></td>
-                        <td><i class="fas fa-times"></i></td>
-                        <td><i class="fas fa-check"></i></td>
-                    </tr>
-                    <tr>
-                        <td>Screens you can watch on at the same time</td>
-                        <td>1</td>
-                        <td>2</td>
-                        <td>4</td>
-                    </tr>
-                    <tr>
-                        <td>Watch on your laptop, TV, phone and tablet</td>
-                        <td><i class="fas fa-check"></i></td>
-                        <td><i class="fas fa-check"></i></td>
-                        <td><i class="fas fa-check"></i></td>
-                    </tr>
-                    <tr>
-                        <td>Unlimited movies and TV shows</td>
-                        <td><i class="fas fa-check"></i></td>
-                        <td><i class="fas fa-check"></i></td>
-                        <td><i class="fas fa-check"></i></td>
-                    </tr>
-                    <tr>
-                        <td>Cancel anytime</td>
-                        <td><i class="fas fa-check"></i></td>
-                        <td><i class="fas fa-check"></i></td>
-                        <td><i class="fas fa-check"></i></td>
-                    </tr>
-                    <tr>
-                        <td>First month free</td>
-                        <td><i class="fas fa-check"></i></td>
-                        <td><i class="fas fa-check"></i></td>
-                        <td><i class="fas fa-check"></i></td>
-                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        if (item.StartTime.Day == DateTime.Now.Day)
+                        {
+                            <tr>
+                                <td>@item.VideoContent.Title</td>
+                                <td>@item.StartTime.ToString("dd/MM/yyyy HH:mm a")</td>
+                            </tr>
+                        }
+                    }
                 </tbody>
             </table>
         </div>
