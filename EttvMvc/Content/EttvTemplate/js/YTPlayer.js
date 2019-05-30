@@ -1,6 +1,8 @@
 
 var seekToTime;
 var myVideoId;
+var futureVideoList = [];
+var remainTimeToNextVideo;
 var result = [];
 $.ajax({
     type: "GET",
@@ -22,19 +24,24 @@ $.ajax({
 console.log(result);
 
 var date = Date.now();
-$(document).ready(function () { result.forEach(findVideoAndSeekTo);  });
+
 function findVideoAndSeekTo(item, index) {
-    console.log(index, moment(Date.now()).isBetween(item["startTime"], item["endTime"]));
+    //console.log(index, moment(Date.now()).isBetween(item["startTime"], item["endTime"]));
     if (moment(Date.now()).isBetween(item["startTime"], item["endTime"])) {
         seekToTime = moment(Date.now()).diff(moment(item["startTime"]));
         myVideoId = item["videoId"];
-        console.log(seekToTime, 'in function');
-        console.log(myVideoId, 'in function');
+        console.log(seekToTime, 'in function in if isbetween');
+        console.log(myVideoId, 'in function in if isbetween');
+    } else if (myVideoId == undefined) {
+        if (moment(Date.now()).isBefore(item["startTime"])) {
+            futureVideoList.push(moment(item["startTime"]).diff(moment(Date.now())));
+        }
     }
 }
 
 function findVIdSeekTo() {
     result.forEach(findVideoAndSeekTo);
+    //result.forEach(findVideoAndSeekTo);
     //TODO test again
     //for (var i = 0; i < result.length; i++) {
     //    if (moment(Date.now()).isBetween(result[i]["startTime"], result[i]["endTime"])) {
@@ -42,11 +49,38 @@ function findVIdSeekTo() {
     //        myVideoId = result[i]["videoId"];
     //        console.log(seekToTime, 'in findVIdSeekTo()');
     //        console.log(myVideoId, 'in findVIdSeekTo()');
+    //    } else {
+    //        if (moment(Date.now()).isBefore(result[i]["startTime"])) {
+    //            futureVideoList[futureVideoList.length] = moment(result[i]["startTime"]).diff(moment(Date.now()));
+    //        }
     //    }
     //}
+    //console.log(Math.round(futureVideoList[0] / 60000));
+    //remainTimeToNextVideo = futureVideoList[0];
+    //console.log(remainTimeToNextVideo)
 }
-
-//TODO function with for loop ?
+function millisToMinutesAndSeconds(millis) {
+    var minutes = Math.floor(millis / 60000);
+    var seconds = ((millis % 60000) / 1000).toFixed(0);
+    return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+}
+var $a = document.querySelector.bind(document); // for fullscreen
+$(document).ready(function () {
+    findVIdSeekTo();
+    console.log(futureVideoList[0]);
+    console.log(millisToMinutesAndSeconds(futureVideoList[0]));
+    var ms = futureVideoList[0];
+    if (myVideoId == undefined) {
+        var st = setInterval(function () {
+            ms -= 1000;
+        }, 1000);
+        runn = setInterval(function () { $('div#remainingTime').text("Remaining Time for Next Program : " + millisToMinutesAndSeconds(ms)); }, 1000);
+    }
+    // refresh when time for the first next video is arrived
+    var timeremainingForFirstNextVideo = futureVideoList[0];
+    if (timeremainingForFirstNextVideo > 0)
+        setTimeout(function () { location.reload(); }, ms);
+});
 
 function progress(percent, $element) {
     var progressBarWidth = percent * $element.width() / 100;
@@ -82,19 +116,28 @@ function onYouTubeIframeAPIReady() {
         },
         events: {
             'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
+            'onStateChange': onPlayerStateChange,
+            'onError' : onPlayerError
         }
     });
 }
-//var stringList = '9sWEecNUW-o,taJ60kskkns';
 
+var iframe;
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
     event.target.setVolume(100);
-    event.target.seekTo(seekToTime/1000);
+    event.target.seekTo(seekToTime / 1000);
     event.target.playVideo();
+    findVIdSeekTo();
+    iframe = $a('#ytplayer');
+    setupListener();
 }
 
+function onPlayerError() {
+    $('.n_p_video_container')
+        .html(
+            '<div><img src="https://foreignpolicymag.files.wordpress.com/2018/07/gettyimages-9921744441.jpg?w=600&h=350&crop=0%2C0%2C0%2C0&quality=90"/></div>');
+}
 // 5. The API calls this function when the player's state changes.
 //    The function indicates that when playing a video (state=1),
 //    the player should play for six seconds and then stop.
@@ -103,16 +146,18 @@ function changeState(playerStatus) {
     switch (playerStatus) {
         // case -1: // unstarted 
         case 0:  // ended 
-            //player.videoId = 'taJ60kskkns';
+            //if there is a gap between 2 video
             findVIdSeekTo();
+            if (myVideoId !== undefined)
+                location.reload();
             player.loadVideoById(myVideoId);
             break;
         // case 1:  // playing
         // case 3:     // buffering
         // case 5:     // video cued
-        case 2:     // paused 
-            player.playVideo(player.getCurrentTime());
-            break;
+        //case 2:     // paused 
+        //    player.playVideo(player.getCurrentTime());
+        //    break;
     }
 }
 function onPlayerStateChange(event) {
@@ -134,6 +179,35 @@ function onPlayerStateChange(event) {
         $('#progressBar').hide();
     }
 }
+
+// play pause buttons
+function setupListener() {
+    $a('#fullscreenTop').addEventListener('click', playFullscreen);
+    $a('#fullscreenBottom').addEventListener('click', playFullscreen);
+    $('button#playTop').on('click', playPaly);
+    $('button#pauseTop').on('click', playPause);
+    $('button#playBottom').on('click', playPaly);
+    $('button#pauseBottom').on('click', playPause);
+}
+
+function playFullscreen() {
+    var requestFullScreen = iframe.requestFullScreen || iframe.mozRequestFullScreen || iframe.webkitRequestFullScreen;
+    if (requestFullScreen) {
+        requestFullScreen.bind(iframe)();
+        console.log(requestFullScreen);
+    }
+}
+
+function playPaly() {
+    findVIdSeekTo();
+    if (myVideoId !== undefined)
+        location.reload();
+    player.loadVideoById(myVideoId);
+}
+function playPause() {
+    player.stopVideo();
+}
+
 var dateTime = new Date("2015-06-17 14:24:36");
 dateTime = moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
 

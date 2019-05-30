@@ -9,15 +9,16 @@ namespace EttvMvc.Controllers
 {
     public class HomeController : Controller
     {
+        //TODO homepage services are needed
         public ActionResult Index()
         {
-            List<ChannelProgram> chp = ChannelProgram.GetAll();
+            IEnumerable<ChannelProgram> chp = ChannelProgram.GetAll().Where(c => c.StartTime.Day <= DateTime.Now.Day);
             return View(chp);
         }
 
         public JsonResult GetIndexContentJsonResult()
         {
-            List<ChannelProgram> chp = ChannelProgram.GetAll();
+            IEnumerable<ChannelProgram> chp = ChannelProgram.GetAll().Where(c => c.StartTime.Day <= DateTime.Now.Day);
             return new JsonResult{Data = chp, JsonRequestBehavior = JsonRequestBehavior.AllowGet};
         }
 

@@ -2,21 +2,29 @@
 <header class="showcase">
     <div class="showcase-top">
         <img src="@Url.Content("~/Content/EttvTemplate/")img/EttvLogo.png" alt="Ettv" />
-        @if (UserSession.CurrentUser==null)
+        @if (UserSession.CurrentUser == null)
         {
-            @Html.ActionLink("Sign In", "Index", "User", new object {}, new {@class = "button button-rounded"});
+            @Html.ActionLink("Sign In", "Index", "User", new object { }, new { @class = "button button-rounded" });
         }
         else
         {
-            @Html.ActionLink("Back to management", "Index", "Channel", new { area = "Admin" }, new {@class = "button button-rounded"});
+            @Html.ActionLink("Back to management", "Index", "Channel", new { area = "Admin" }, new { @class = "button button-rounded" });
         }
-        
+
     </div>
     <div class="showcase-content">
         @*<iframe width="660" height="315" src="https://www.youtube.com/embed/SJ5oQFQTzb4" frameborder="0"
-        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>*@
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>*@
+        <div id="remainingTime"></div>
+        <div class="button-top">
+            <div class="buttonsGroup">
+                <button id="playTop" class="button button-rounded"><i class="fas fa-play"></i></button>
+                <button id="pauseTop" class="button button-rounded"><i class="fas fa-pause"></i></button>
+                <button id="fullscreenTop" class="button button-rounded"><i class="fas fa-arrows-alt"></i></button>
+            </div>
+            <div style="margin: 0.5em"></div>
+        </div>
         <div class="now_playing">
-
             <div class="n_p_video_container">
                 <div class="n_p_video_play"></div>
                 <div id="ytplayer"></div>
@@ -28,8 +36,14 @@
                     </div>
                 </div>
             </div>
-
         </div>
-
+        <div class="button-bottom">
+            <div style="margin: 0.1em"></div>
+            <div class="buttonsGroup">
+                <button id="playBottom" class="button button-rounded"><i class="fas fa-play"></i></button>
+                <button id="pauseBottom" class="button button-rounded"><i class="fas fa-pause"></i></button>
+                <button id="fullscreenBottom" class="button button-rounded"><i class="fas fa-arrows-alt"></i></button>
+            </div>
+        </div>
     </div>
 </header>
