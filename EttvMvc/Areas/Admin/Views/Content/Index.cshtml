@@ -1,0 +1,38 @@
+﻿@model IEnumerable<EttvMvc.Models.VideoContent>
+
+@{
+    ViewBag.Title = "Content";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+
+@using (Html.BeginForm("Index", "Content", FormMethod.Post))
+{<div class="input-group">
+        <input type="url" name="url" id="url" class="form-control col-12" placeholder="Insert the Youtube Url" aria-label="Insert the Youtube Url" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+            <input type="submit" value="Add video" class="btn btn-outline-secondary" />
+        </div>
+    </div>
+}
+
+<br />
+
+<ul class="list-unstyled">
+    @foreach (var item in Model)
+    {
+        <li class="media">
+            <img class="m-3" src="@item.Thumbnail" />
+            <div class="media-body">
+                <div class="card-header">
+                    <h5 class="mt-0 mb-1"> Title : @item.Title</h5>
+                    <h6> Tag : @item.Tag</h6>
+                    @Html.ActionLink("Edit tag", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </div>
+                <div class="card=footer text-center">
+                </div>
+            </div>
+        </li>
+    }
+</ul>

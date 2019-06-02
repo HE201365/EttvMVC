@@ -22,12 +22,12 @@ namespace EttvMvc.Services
                 string jsonString = JsonConvert.SerializeObject(viewModel);
                 StringContent content = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-                User results = new User();
+                AppUser results = new AppUser();
 
                 HttpResponseMessage response = client.PostAsync("Login/", content).Result;
                 if (response.IsSuccessStatusCode)
                 {
-                    results = JsonConvert.DeserializeObject<User>(response.Content.ReadAsStringAsync().Result);
+                    results = JsonConvert.DeserializeObject<AppUser>(response.Content.ReadAsStringAsync().Result);
                     if (results != null)
                     {
                         UserSession.CurrentUser = results;

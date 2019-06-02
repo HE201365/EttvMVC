@@ -1,19 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
 using EttvMvc.Models;
+using EttvMvc.Services;
 
 namespace EttvMvc.Areas.Admin.Controllers
 {
     public class ContentController : Controller
     {
-        // GET: Admin/Content
-        public ActionResult Index(VideoContent model)
-        {
+        private readonly ContentService _contentService;
 
-            return View();
+        public ContentController()
+        {
+            _contentService = new ContentService();
+        }
+
+        // GET: Admin/Content
+        public ActionResult Index()
+        {
+            IEnumerable<VideoContent> videoContent = _contentService.GetAll();
+            return View(videoContent);
+        }
+
+        // POST: Admin/Content
+        [HttpPost]
+        public ActionResult Index(string url)
+        {
+            _contentService.Add(url);
+            IEnumerable<VideoContent> videoContent = _contentService.GetAll();
+            return View(videoContent);
         }
     }
 }

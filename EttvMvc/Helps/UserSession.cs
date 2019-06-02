@@ -9,9 +9,9 @@ namespace EttvMvc.Helps
     public static class UserSession
     {
 
-        public static User CurrentUser
+        public static AppUser CurrentUser
         {
-            get { return (User)HttpContext.Current.Session["CurrentUser"]; }
+            get { return (AppUser)HttpContext.Current.Session["CurrentUser"]; }
             set { HttpContext.Current.Session["CurrentUser"] = value; }
         }
     }
