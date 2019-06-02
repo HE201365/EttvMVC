@@ -23,20 +23,23 @@ $.ajax({
 });
 console.log(result);
 
-var date = Date.now();
+//var date = Date.now();
 
-function findVideoAndSeekTo(item, index) {
-    //console.log(index, moment(Date.now()).isBetween(item["startTime"], item["endTime"]));
-    if (moment(Date.now()).isBetween(item["startTime"], item["endTime"])) {
-        seekToTime = moment(Date.now()).diff(moment(item["startTime"]));
-        myVideoId = item["videoId"];
-        console.log(seekToTime, 'in function in if isbetween');
-        console.log(myVideoId, 'in function in if isbetween');
-    } else if (myVideoId == undefined) {
-        if (moment(Date.now()).isBefore(item["startTime"])) {
-            futureVideoList.push(moment(item["startTime"]).diff(moment(Date.now())));
-        }
-    }
+//function millisToMinutesAndSeconds(millis) {
+//    var minutes = Math.floor(millis / 60000);
+//    var seconds = ((millis % 60000) / 1000).toFixed(0);
+//    return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+//}
+function millisToMinutesAndSeconds(duration) {
+    seconds = Math.floor((duration / 1000) % 60),
+    minutes = Math.floor((duration / (1000 * 60)) % 60),
+    hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+    hours = (hours < 10) ? "0" + hours : hours;
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+    return hours + ":" + minutes + ":" + seconds;
 }
 
 function findVIdSeekTo() {
@@ -59,32 +62,40 @@ function findVIdSeekTo() {
     //remainTimeToNextVideo = futureVideoList[0];
     //console.log(remainTimeToNextVideo)
 }
-function millisToMinutesAndSeconds(millis) {
-    var minutes = Math.floor(millis / 60000);
-    var seconds = ((millis % 60000) / 1000).toFixed(0);
-    return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+function findVideoAndSeekTo(item, index) {
+    //console.log(index, moment(Date.now()).isBetween(item["startTime"], item["endTime"]));
+    if (moment(Date.now()).isBetween(item["startTime"], item["endTime"])) {
+        seekToTime = moment(Date.now()).diff(moment(item["startTime"]));
+        myVideoId = item["videoId"];
+        console.log(seekToTime, 'in function in if isbetween');
+        console.log(myVideoId, 'in function in if isbetween');
+    } else if (myVideoId == undefined) {
+        if (moment(Date.now()).isBefore(item["startTime"])) {
+            futureVideoList.push(moment(item["startTime"]).diff(moment(Date.now())));
+        }
+    }
 }
 var $a = document.querySelector.bind(document); // for fullscreen
+
 $(document).ready(function () {
     findVIdSeekTo();
-    console.log(futureVideoList[0]);
-    console.log(millisToMinutesAndSeconds(futureVideoList[0]));
+    //console.log(futureVideoList[0]);
+    //console.log(millisToMinutesAndSeconds(futureVideoList[0]));
+    // Remaining Time for Next Program : 
+    // var ms is the variable that decrease every second 
     var ms = futureVideoList[0];
     if (myVideoId == undefined) {
-        var st = setInterval(function () {
-            ms -= 1000;
-        }, 1000);
+        var st = setInterval(function () { ms -= 1000; }, 1000);
         runn = setInterval(function () { $('div#remainingTime').text("Remaining Time for Next Program : " + millisToMinutesAndSeconds(ms)); }, 1000);
     }
     // refresh when time for the first next video is arrived
     var timeremainingForFirstNextVideo = futureVideoList[0];
-    if (timeremainingForFirstNextVideo > 0)
-        setTimeout(function () { location.reload(); }, ms);
+    if (timeremainingForFirstNextVideo > 0) { setTimeout(function () { location.reload(); }, ms); }
+
 });
 
 function progress(percent, $element) {
     var progressBarWidth = percent * $element.width() / 100;
-
     $element.find('div').animate({ width: progressBarWidth });
 }
 
@@ -112,12 +123,12 @@ function onYouTubeIframeAPIReady() {
             'color': 'white',
             'cc_lang_pref': 1,
             'enablejsapi': 1,
-            'origin': 'https://localhost:44328/'
+            //'origin': 'https://localhost:44328/'
         },
         events: {
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange,
-            'onError' : onPlayerError
+            'onError': onPlayerError
         }
     });
 }
