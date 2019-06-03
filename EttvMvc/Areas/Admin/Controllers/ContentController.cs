@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
 using EttvMvc.Models;
 using EttvMvc.Services;
-using Newtonsoft.Json;
 
 namespace EttvMvc.Areas.Admin.Controllers
 {

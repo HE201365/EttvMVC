@@ -160,7 +160,7 @@ namespace EttvMvc.Services
         public int convertYouTubeDuration(string yt_duration)
         {
             TimeSpan youTubeDuration = XmlConvert.ToTimeSpan(yt_duration);
-            int seconds = (int)youTubeDuration.TotalSeconds;
+            int seconds = (int)youTubeDuration.TotalMilliseconds;
             return seconds;
         }
     }

@@ -1,8 +1,63 @@
-﻿
+﻿@model EttvMvc.Helps.ViewModels.ChannelPageViewModel
 @{
     ViewBag.Title = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h2>From channel index page</h2>
+<br />
 
+@using (Html.BeginForm("Index", "Channel", FormMethod.Post))
+{
+    <div class="input-group">
+        <input type="url" name="url" id="url" class="form-control col-12" placeholder="Insert the Youtube Url" aria-label="Insert the Youtube Url" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+            <input type="submit" value="Add video" class="btn btn-outline-secondary" />
+        </div>
+    </div>
+}
+
+<br />
+<div class="row">
+    <div class="col-sm">
+        <div class="col font-weight-bolder">Contents</div>
+        <ul class="list-unstyled">
+            @foreach (var item in Model.VideoContents.ToList())
+            {
+                <li class="media">
+                    <img class="m-3" src="@item.Thumbnail"/>
+                    <div class="media-body">
+                        <div class="card-header">
+                            <h5 class="mt-0 mb-1"> Title : @item.Title</h5>
+                            <h6> Video tag : @item.Tag</h6>
+                            @Html.ActionLink("Add to program", "AddProgram", new { id = item.VideoId })
+                          @*  @Html.ActionLink("Delete", "Delete", new {id = item.Id}, new {onclick = "return confirm('Are you sure you wish to delete this Video Content ?');"})*@
+                        </div>
+                        <div class="card=footer text-center">
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class=" col-sm border-left">
+        <div class="col font-weight-bolder">Programs</div>
+        <ul class="list-unstyled">
+            @foreach (var item in Model.ChannelPrograms.ToList())
+            {
+                <li class="media">
+                    <img class="m-3" src="@item.VideoContent.Thumbnail" />
+                    <div class="media-body">
+                        <div class="card-header">
+                            <h5 class="mt-0 mb-1"> Title : @item.VideoContent.Title</h5>
+                            <h6> Start at @item.StartTime.Day / @item.StartTime.Month  @item.StartTime.Hour : @item.StartTime.Minute</h6>
+                            @*@Html.ActionLink("Add to program", "Create", new { id = item.Id })*@
+                            @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { onclick = "return confirm('Are you sure you wish to delete this Video Content ?');" })
+                        </div>
+                        <div class="card=footer text-center">
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

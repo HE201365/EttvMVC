@@ -8,6 +8,7 @@ $.ajax({
     type: "GET",
     url: "/Home/GetIndexContentJsonResult",
     success: function (data) {
+        console.log(data)
         console.log(data[0]["VideoContent"]["VideoId"]);
         console.log(moment(data[0]["EndTime"]) - moment(data[0]["StartTime"]));
         for (var i = 0; i < data.length; i++) {
@@ -123,7 +124,7 @@ function onYouTubeIframeAPIReady() {
             'color': 'white',
             'cc_lang_pref': 1,
             'enablejsapi': 1,
-            //'origin': 'https://localhost:44328/'
+            'origin': 'https://localhost:44328/'
         },
         events: {
             'onReady': onPlayerReady,

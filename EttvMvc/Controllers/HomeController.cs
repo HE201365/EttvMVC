@@ -1,24 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using EttvMvc.Models;
+using EttvMvc.Services;
 
 namespace EttvMvc.Controllers
 {
     public class HomeController : Controller
     {
-        //TODO homepage services are needed
+        private readonly ChannelProgramService _channelProgramService;
+
+        public HomeController()
+        {
+            _channelProgramService = new ChannelProgramService();
+        }
         public ActionResult Index()
         {
-            IEnumerable<ChannelProgram> chp = ChannelProgram.GetAll().Where(c => c.StartTime.Day <= DateTime.Now.Day);
+            IEnumerable<ChannelProgram> chp = _channelProgramService.GetAll().Where(c => c.StartTime.Day <= DateTime.Now.Day);
             return View(chp);
         }
 
         public JsonResult GetIndexContentJsonResult()
         {
-            IEnumerable<ChannelProgram> chp = ChannelProgram.GetAll().Where(c => c.StartTime.Day <= DateTime.Now.Day);
+            IEnumerable<ChannelProgram> chp = _channelProgramService.GetAll().Where(c => c.StartTime.Day <= DateTime.Now.Day);
             return new JsonResult{Data = chp, JsonRequestBehavior = JsonRequestBehavior.AllowGet};
         }
 
