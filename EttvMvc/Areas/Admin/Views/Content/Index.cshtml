@@ -27,8 +27,8 @@
                 <div class="card-header">
                     <h5 class="mt-0 mb-1"> Title : @item.Title</h5>
                     <h6> Tag : @item.Tag</h6>
-                    @Html.ActionLink("Edit tag", "Edit", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    @Html.ActionLink("Edit tag", "TagEdit", new { id=item.VideoId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id=item.VideoId  }, new { onclick = "return confirm('Are you sure you wish to delete this Video Content ?');"})
                 </div>
                 <div class="card=footer text-center">
                 </div>

@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Configuration;
+using System.Web.Mvc;
 using System.Xml;
 using EttvMvc.Helps;
 using EttvMvc.Models;
@@ -19,7 +20,6 @@ namespace EttvMvc.Services
     {
         public static readonly Regex VimeoVideoRegex = new Regex(@"vimeo\.com/(?:.*#|.*/videos/)?([0-9]+)", RegexOptions.IgnoreCase | RegexOptions.Multiline);
         public static readonly Regex YoutubeVideoRegex = new Regex(@"youtu(?:\.be|be\.com)/(?:.*v(?:/|=)|(?:.*/)?)([a-zA-Z0-9-_]+)", RegexOptions.IgnoreCase);
-        public static readonly Regex time_extractor = new Regex(@"/([0-9]*H)?([0-9]*M)?([0-9]*S)?$/", RegexOptions.IgnoreCase);
         public IEnumerable<VideoContent> GetAll()
         {
             HttpClient client = new HttpClient();
@@ -64,6 +64,61 @@ namespace EttvMvc.Services
             }
         }
 
+        public VideoContent GetByVideoId(string id)
+        {
+            return GetAll().Where(x => x.VideoId == id).SingleOrDefault();
+        }
+
+        public bool TagEdit(VideoContent model)
+        {
+            var status = false;
+            try
+            {
+                if (model.VideoId != null)
+                {
+                    HttpClient client = new HttpClient();
+                    client.BaseAddress = new Uri("https://localhost:44384/api/");
+                    string JsonString = JsonConvert.SerializeObject(model);
+                    StringContent content = new StringContent(JsonString, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = client.PutAsync("VideoContent/" + model.VideoId, content).Result;
+                    //Booking result = null;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        status = true;
+                    }
+                }
+                return status;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+        }
+        public bool Delete(string id)
+        {
+            var status = false;
+            try
+            {
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("https://localhost:44384/api/");
+                HttpResponseMessage response = client.DeleteAsync("VideoContent/" + id).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    status = true;
+                }
+
+                return status;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return status;
+            }
+        }
+
         public VideoContent MakeContentFromUrl(string url)
         {
             string videoId = MakeVideoIdFromUrl(url);
@@ -102,7 +157,7 @@ namespace EttvMvc.Services
             return id;
         }
 
-        public int  convertYouTubeDuration( string yt_duration)
+        public int convertYouTubeDuration(string yt_duration)
         {
             TimeSpan youTubeDuration = XmlConvert.ToTimeSpan(yt_duration);
             int seconds = (int)youTubeDuration.TotalSeconds;
