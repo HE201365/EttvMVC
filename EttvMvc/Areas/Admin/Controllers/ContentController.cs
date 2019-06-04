@@ -25,7 +25,8 @@ namespace EttvMvc.Areas.Admin.Controllers
         [HttpPost]
         public ActionResult Index(string url)
         {
-            _contentService.Add(url);
+            if (url != null)
+                _contentService.Add(url);
             IEnumerable<VideoContent> videoContent = _contentService.GetAll();
             return View(videoContent);
         }

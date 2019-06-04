@@ -58,5 +58,15 @@ namespace EttvMvc.Areas.Admin.Controllers
             };
             return RedirectToAction("Index",channelPageViewModel);
         }
+
+        public ActionResult Delete(int id)
+        {
+            if (_channelProgramService.Delete(id))
+            {
+                return RedirectToAction("Index");
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }

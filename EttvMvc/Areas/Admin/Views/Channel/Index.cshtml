@@ -9,9 +9,9 @@
 @using (Html.BeginForm("Index", "Channel", FormMethod.Post))
 {
     <div class="input-group">
-        <input type="url" name="url" id="url" class="form-control col-12" placeholder="Insert the Youtube Url" aria-label="Insert the Youtube Url" aria-describedby="basic-addon2">
+        <input type="url" name="url" id="url" class="form-control col-12" placeholder="Search by tag..." aria-label="Insert the Youtube Url" aria-describedby="basic-addon2">
         <div class="input-group-append">
-            <input type="submit" value="Add video" class="btn btn-outline-secondary" />
+            <input type="submit" value="Search" class="btn btn-outline-secondary" />
         </div>
     </div>
 }
@@ -49,7 +49,8 @@
                     <div class="media-body">
                         <div class="card-header">
                             <h5 class="mt-0 mb-1"> Title : @item.VideoContent.Title</h5>
-                            <h6> Start at @item.StartTime.Day / @item.StartTime.Month  @item.StartTime.Hour : @item.StartTime.Minute</h6>
+                            <h6> Start time : @item.StartTime.Day/@item.StartTime.Month - @item.StartTime.Hour:@item.StartTime.Minute</h6>
+                            <h6> End time : @item.EndTime.Day/@item.EndTime.Month - @item.EndTime.Hour:@item.EndTime.Minute</h6>
                             @*@Html.ActionLink("Add to program", "Create", new { id = item.Id })*@
                             @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { onclick = "return confirm('Are you sure you wish to delete this Video Content ?');" })
                         </div>

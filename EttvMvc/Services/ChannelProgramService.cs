@@ -67,5 +67,28 @@ namespace EttvMvc.Services
                 return false;
             }
         }
+
+        public bool Delete(int id)
+        {
+            var status = false;
+            try
+            {
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("https://localhost:44384/api/");
+                HttpResponseMessage response = client.DeleteAsync("channelprogram/" + id).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    status = true;
+                }
+
+                return status;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return status;
+            }
+        }
     }
 }

@@ -8,9 +8,9 @@ $.ajax({
     type: "GET",
     url: "/Home/GetIndexContentJsonResult",
     success: function (data) {
-        console.log(data)
-        console.log(data[0]["VideoContent"]["VideoId"]);
-        console.log(moment(data[0]["EndTime"]) - moment(data[0]["StartTime"]));
+        //console.log(data)
+        //console.log(data[0]["VideoContent"]["VideoId"]);
+        //console.log(moment(data[0]["EndTime"]) - moment(data[0]["StartTime"]));
         for (var i = 0; i < data.length; i++) {
             result.push({
                 videoId: data[i]["VideoContent"]["VideoId"],
@@ -45,7 +45,6 @@ function millisToMinutesAndSeconds(duration) {
 
 function findVIdSeekTo() {
     result.forEach(findVideoAndSeekTo);
-    //result.forEach(findVideoAndSeekTo);
     //TODO test again
     //for (var i = 0; i < result.length; i++) {
     //    if (moment(Date.now()).isBetween(result[i]["startTime"], result[i]["endTime"])) {
@@ -70,7 +69,8 @@ function findVideoAndSeekTo(item, index) {
         myVideoId = item["videoId"];
         console.log(seekToTime, 'in function in if isbetween');
         console.log(myVideoId, 'in function in if isbetween');
-    } else if (myVideoId == undefined) {
+    }
+    if (myVideoId == undefined) {
         if (moment(Date.now()).isBefore(item["startTime"])) {
             futureVideoList.push(moment(item["startTime"]).diff(moment(Date.now())));
         }
@@ -80,18 +80,23 @@ var $a = document.querySelector.bind(document); // for fullscreen
 
 $(document).ready(function () {
     findVIdSeekTo();
-    //console.log(futureVideoList[0]);
+    //result.forEach(findVideoAndSeekTo);
+    console.log(futureVideoList);
     //console.log(millisToMinutesAndSeconds(futureVideoList[0]));
     // Remaining Time for Next Program : 
     // var ms is the variable that decrease every second 
     var ms = futureVideoList[0];
-    if (myVideoId == undefined) {
-        var st = setInterval(function () { ms -= 1000; }, 1000);
+    if (myVideoId == undefined && ms > 0) {
+        st = setInterval(function () { ms -= 1000; }, 1000);
         runn = setInterval(function () { $('div#remainingTime').text("Remaining Time for Next Program : " + millisToMinutesAndSeconds(ms)); }, 1000);
     }
     // refresh when time for the first next video is arrived
     var timeremainingForFirstNextVideo = futureVideoList[0];
     if (timeremainingForFirstNextVideo > 0) { setTimeout(function () { location.reload(); }, ms); }
+
+    $(document).on('turbolinks:load', function () {
+        onYouTubeIframeAPIReady();
+    });
 
 });
 
@@ -109,7 +114,6 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 //    after the API code downloads.
 var player;
 //var myVideoId = 'M7lc1UVf-VE';
-
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('ytplayer', {
         height: '350',
@@ -133,7 +137,9 @@ function onYouTubeIframeAPIReady() {
         }
     });
 }
-
+$(document).on('turbolinks:load', function () {
+    onYouTubeIframeAPIReady()
+})
 var iframe;
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
@@ -172,6 +178,8 @@ function changeState(playerStatus) {
         //    break;
     }
 }
+
+var mytimer;
 function onPlayerStateChange(event) {
     changeState(event.data);
     if (event.data == YT.PlayerState.PLAYING) {
@@ -220,7 +228,7 @@ function playPause() {
     player.stopVideo();
 }
 
-var dateTime = new Date("2015-06-17 14:24:36");
-dateTime = moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
+//var dateTime = new Date("2015-06-17 14:24:36");
+//dateTime = moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
 
-console.log(dateTime)
+//console.log(dateTime)

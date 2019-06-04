@@ -13,6 +13,7 @@ namespace EttvMvc.Models
         public string Email { get; set; }
         [Required]
         [DataType(DataType.Password)]
+        [Display(Name = "Password")]
         public string HashPassword { get; set; }
     }
 }
