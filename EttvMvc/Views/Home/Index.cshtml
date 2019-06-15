@@ -93,7 +93,7 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        if (item.StartTime.Day == DateTime.Now.Day)
+                        if (item.StartTime.Date == DateTime.Now.Date)
                         {
                             <tr>
                                 <td>@item.VideoContent.Title</td>

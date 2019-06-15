@@ -6,16 +6,28 @@
 }
 
 <br />
-
-@using (Html.BeginForm("Index", "Content", FormMethod.Post))
-{<div class="input-group">
-        <input type="url" name="url" id="url" class="form-control col-12" placeholder="Insert the Youtube Url" aria-label="Insert the Youtube Url" aria-describedby="basic-addon2">
-        <div class="input-group-append">
-            <input type="submit" value="Add video" class="btn btn-outline-secondary" />
-        </div>
+<div class="row">
+    <div class="col-md-9">
+        @using (Html.BeginForm("Index", "Content", FormMethod.Post))
+        {<div class="input-group">
+                <input type="url" name="url" id="url" class="form-control col-12" placeholder="Insert the Youtube Url" aria-label="Insert the Youtube Url" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <input type="submit" value="Add video" class="btn btn-outline-secondary" />
+                </div>
+            </div>
+        }
     </div>
-}
-
+    <div class="col-md-3">
+        @using (Html.BeginForm("Index", "Content", FormMethod.Get))
+        {<div class="input-group">
+                <input type="text" name="tag" id="tag" class="form-control col-12" placeholder="search by tag" aria-label="Insert tag for search" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <input type="submit" value="search" class="btn btn-outline-secondary" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
 <br />
 
 <ul class="list-unstyled">

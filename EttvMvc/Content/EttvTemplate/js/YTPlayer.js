@@ -128,7 +128,7 @@ function onYouTubeIframeAPIReady() {
             'color': 'white',
             'cc_lang_pref': 1,
             'enablejsapi': 1,
-            'origin': 'https://localhost:44328/'
+    'origin': 'https://localhost:44328/'
         },
         events: {
             'onReady': onPlayerReady,
@@ -137,9 +137,7 @@ function onYouTubeIframeAPIReady() {
         }
     });
 }
-$(document).on('turbolinks:load', function () {
-    onYouTubeIframeAPIReady()
-})
+
 var iframe;
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {

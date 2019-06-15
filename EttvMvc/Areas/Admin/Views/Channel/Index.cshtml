@@ -18,47 +18,92 @@
 
 <br />
 <div class="row">
-    <div class="col-sm">
-        <div class="col font-weight-bolder">Contents</div>
-        <ul class="list-unstyled">
-            @foreach (var item in Model.VideoContents.ToList())
-            {
-                <li class="media">
-                    <img class="m-3" src="@item.Thumbnail"/>
-                    <div class="media-body">
-                        <div class="card-header">
-                            <h5 class="mt-0 mb-1"> Title : @item.Title</h5>
-                            <h6> Video tag : @item.Tag</h6>
-                            @Html.ActionLink("Add to program", "AddProgram", new { id = item.VideoId })
-                          @*  @Html.ActionLink("Delete", "Delete", new {id = item.Id}, new {onclick = "return confirm('Are you sure you wish to delete this Video Content ?');"})*@
+    <div class="col-md-5 col-sm">
+        <div class="col font-weight-bolder"><h3>Contents</h3></div>
+
+        @using (Html.BeginForm("Index", "Channel", FormMethod.Get))
+        {<div class="input-group">
+                <input type="text" name="tag" id="tag" class="form-control col-12" placeholder="search by tag" aria-label="Insert tag for search" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <input type="submit" value="search" class="btn btn-outline-secondary" />
+                </div>
+            </div>
+        }
+
+        <div class="bg-light">
+            <ul class="list-unstyled">
+                @foreach (var item in Model.VideoContents.ToList())
+                {
+                    <li class="media">
+                        <img class="m-3" src="@item.Thumbnail" />
+                        <div class="media-body">
+                            <div class="card-header">
+                                <h5 class="mt-0 mb-1"> Title : @item.Title</h5>
+                                <h6> Video tag : @item.Tag</h6>
+                                @Html.ActionLink("Add to program", "AddProgram", new { id = item.VideoId })
+                                @*  @Html.ActionLink("Delete", "Delete", new {id = item.Id}, new {onclick = "return confirm('Are you sure you wish to delete this Video Content ?');"})*@
+                            </div>
+                            <div class="card=footer text-center">
+                            </div>
                         </div>
-                        <div class="card=footer text-center">
-                        </div>
-                    </div>
-                </li>
-            }
-        </ul>
+                    </li>
+                }
+            </ul>
+        </div>
     </div>
-    <div class=" col-sm border-left">
-        <div class="col font-weight-bolder">Programs</div>
-        <ul class="list-unstyled">
-            @foreach (var item in Model.ChannelPrograms.ToList())
-            {
-                <li class="media">
-                    <img class="m-3" src="@item.VideoContent.Thumbnail" />
-                    <div class="media-body">
-                        <div class="card-header">
-                            <h5 class="mt-0 mb-1"> Title : @item.VideoContent.Title</h5>
-                            <h6> Start time : @item.StartTime.Day/@item.StartTime.Month - @item.StartTime.Hour:@item.StartTime.Minute</h6>
-                            <h6> End time : @item.EndTime.Day/@item.EndTime.Month - @item.EndTime.Hour:@item.EndTime.Minute</h6>
-                            @*@Html.ActionLink("Add to program", "Create", new { id = item.Id })*@
-                            @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { onclick = "return confirm('Are you sure you wish to delete this Video Content ?');" })
-                        </div>
-                        <div class="card=footer text-center">
-                        </div>
-                    </div>
-                </li>
-            }
-        </ul>
+    <div class="col-md-7 col-sm border-left bg-transparent">
+        <div class="col font-weight-bolder"><h3>Programs</h3></div>
+
+        @using (Html.BeginForm("Index", "Channel", FormMethod.Get))
+        {<div class="input-group">
+                <input type="date" name="startDate" id="startDate" class="form-control col-12" min="2019-01-01">
+                <div class="input-group-append">
+                    <input type="submit" value="Go" class="btn btn-outline-secondary" />
+                </div>
+            </div>
+        }
+
+        <div class="bg-transparent">
+            @*<ul class="list-unstyled">
+                    @foreach (var item in Model.ChannelPrograms.ToList())
+                    {
+                        <li class="media">
+                            <img class="m-3" src="@item.VideoContent.Thumbnail" />
+                            <div class="media-body">
+                                <div class="card-header">
+                                    <h5 class="mt-0 mb-1"> Title : @item.VideoContent.Title</h5>
+                                    <h6> Start time : @item.StartTime.Day/@item.StartTime.Month - @item.StartTime.Hour:@item.StartTime.Minute</h6>
+                                    <h6> End time : @item.EndTime.Day/@item.EndTime.Month - @item.EndTime.Hour:@item.EndTime.Minute</h6>
+                                    // @Html.ActionLink("Add to program", "Create", new { id = item.Id })
+                                    @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { onclick = "return confirm('Are you sure you wish to delete this Video Content ?');" })
+                                </div>
+                                <div class="card=footer text-center">
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>*@
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">From</th>
+                        <th scope="col">To</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ChannelPrograms.ToList())
+                    {
+                        <tr>
+                            <td>@item.VideoContent.Title</td>
+                            <td>@item.StartTime.Day/@item.StartTime.Month - @item.StartTime.Hour:@item.StartTime.Minute</td>
+                            <td>@item.EndTime.Day/@item.EndTime.Month - @item.EndTime.Hour:@item.EndTime.Minute</td>
+                            <td>@Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { onclick = "return confirm('Are you sure you wish to delete this Video Content ?');" })</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

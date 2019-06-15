@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using EttvMvc.Models;
 using EttvMvc.Services;
@@ -15,9 +19,16 @@ namespace EttvMvc.Areas.Admin.Controllers
         }
 
         // GET: Admin/Content
-        public ActionResult Index()
+        [ActionName("Index")]
+        public ActionResult mIndex(string tag)
         {
             IEnumerable<VideoContent> videoContent = _contentService.GetAll();
+
+            if (!string.IsNullOrEmpty(tag))
+            {
+                videoContent = videoContent.Where(x=>x.Tag.ToLower().Contains(tag.ToLower())).ToList();
+            }
+
             return View(videoContent);
         }
 

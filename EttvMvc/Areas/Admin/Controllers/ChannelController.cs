@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using EttvMvc.Helps;
 using EttvMvc.Helps.ViewModels;
@@ -21,10 +22,20 @@ namespace EttvMvc.Areas.Admin.Controllers
 
         [CustomAuth("Admin", "Volunteer")]
         // GET: Admin/Channel
-        public ActionResult Index()
+        public ActionResult Index(string tag, DateTime? startDate)
         {
             IEnumerable<ChannelProgram> channelPrograms = _channelProgramService.GetAll();
             IEnumerable<VideoContent> videoContents = _contentService.GetAll();
+
+            if (!string.IsNullOrEmpty(tag))
+            {
+                videoContents = videoContents.Where(x => x.Tag.ToLower().Contains(tag.ToLower()));
+            }
+
+            if (startDate != null)
+            {
+                channelPrograms = channelPrograms.Where(x => x.StartTime.Date == startDate.Value.Date);
+            }
 
             ChannelPageViewModel channelPageViewModel = new ChannelPageViewModel
             {
