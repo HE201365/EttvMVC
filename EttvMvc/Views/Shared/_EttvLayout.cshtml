@@ -9,6 +9,8 @@
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" />
     <link rel="stylesheet" href="@Url.Content("~/Content/EttvTemplate/")css/style.css" />
+    @*vjs style*@
+    <link href="https://unpkg.com/video.js/dist/video-js.min.css" rel="stylesheet">
     <style>
         #progressBar {
             width: 660px;
@@ -17,11 +19,12 @@
             display: none;
             margin-top: 1px;
         }
-        #progressBar div {
-            height: 100%;
-            width: 0;
-            background-color: var(--light-color);
-        }
+
+            #progressBar div {
+                height: 100%;
+                width: 0;
+                background-color: var(--light-color);
+            }
     </style>
 </head>
 <body>
@@ -39,6 +42,235 @@
     @RenderSection("scripts", required: false)
 
     <script src="@Url.Content("~/Content/EttvTemplate/")js/index.js"></script>
-    <script src="@Url.Content("~/Content/EttvTemplate/")js/YTPlayer.js"></script>
+    @*<script src="@Url.Content("~/Content/EttvTemplate/")js/YTPlayer.js"></script>*@
+
+
+    <script src="https://unpkg.com/video.js/dist/video.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-youtube/2.6.0/Youtube.min.js"></script>
+
+    <script>
+        var seekToTime;
+        var myVideoId, myVideo;
+        var futureVideoList = [];
+        var remainTimeToNextVideo;
+        var result = [];
+
+        function myAjax() {
+            $.ajax({
+                type: "GET",
+                url: "/Home/GetIndexContentJsonResult",
+                success: function (data) {
+                    //console.log(data)
+                    //console.log(data[0]["VideoContent"]["VideoId"]);
+                    //console.log(moment(data[0]["EndTime"]) - moment(data[0]["StartTime"]));
+                    for (var i = 0; i < data.length; i++) {
+                        result.push({
+                            videoId: data[i]["VideoContent"]["VideoId"],
+                            title: data[i]["VideoContent"]["Title"],
+                            duration: data[i]["VideoContent"]["Duration"],
+                            startTime: moment(data[i]["StartTime"]),
+                            endTime: moment(data[i]["EndTime"])
+                        });
+                    }
+                }
+            });
+        }
+        console.log(result);
+
+        function millisToMinutesAndSeconds(duration) {
+            seconds = Math.floor((duration / 1000) % 60),
+                minutes = Math.floor((duration / (1000 * 60)) % 60),
+                hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+            hours = (hours < 10) ? "0" + hours : hours;
+            minutes = (minutes < 10) ? "0" + minutes : minutes;
+            seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+            return hours + ":" + minutes + ":" + seconds;
+        }
+
+
+        $(function () {
+            myAjax();
+            $(document).ajaxSuccess(function () {
+                findVIdSeekTo();
+                console.log(result)
+                //findVIdSeekTo();
+                var ms = futureVideoList[0];
+                if (myVideoId == undefined && ms > 0) {
+                    var st = setInterval(function () { ms -= 1000; }, 1000);
+                    var runn = setInterval(function () { $('div#remainingTime').text("Remaining Time for Next Program : " + millisToMinutesAndSeconds(ms)); }, 1000);
+                }
+                // refresh when time for the first next video is arrived
+                var timeremainingForFirstNextVideo = futureVideoList[0];
+                if (timeremainingForFirstNextVideo > 0) { setTimeout(function () { location.reload(); }, ms); }
+                myVideo = videojs("vid1");
+                loadVideo();
+                //myVideo = videojs('vid1', {
+                //    //techOrder: ["youtube"],
+                //    autoplay: true,
+                //    //youtube: { "iv_load_policy": 3 },
+                //    //sources: [{
+                //    //    type: "video/mp4",
+                //    //    src: "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
+                //    //}]
+                //});
+                myVideo.on('ended', function () {
+                    findVIdSeekTo();
+                    myVideo.src({
+                        "techOrder": ['youtube'],
+                        "type": "video/" + ext,
+                        "src": "https://www.youtube.com/watch?v=" + myVideoId,
+                        "youtube": { "iv_load_policy": 3 }
+                    });
+
+                    var bim = parseInt(seekToTime / 1000);
+                    if (bim >= 0)
+                        myVideo.currentTime(bim);
+                    myVideo.play();
+                    //myVideo.load();
+                });
+                function pausePlayTest() {
+                                    //myVideo.on("pause", function () {
+                //    alert('paused');
+                //});
+                
+                ////var pausetime;
+                ////var duration;
+                ////var count=0;
+                //$('.vjs-play-control').on('click', function (e) {
+                //    console.log('Play/Pause button clicked.');
+                //    console.log($(e.currentTarget).attr('class'));
+                //    console.log($(e.currentTarget).hasClass('vjs-paused'));
+                //    function countPlusOne() {
+                //        count=count+1;
+                //    }
+                //    if ($(e.currentTarget).hasClass('vjs-playing')) {
+                //        duration = myVideo.duration();
+                //        pausetime = myVideo.currentTime();
+                //        count = 0;
+                //        setInterval(countPlusOne, 1000);
+                //        console.log(pausetime)
+                //        console.log(duration)
+                //        console.log(count)
+                //    }
+                //     //myVideo.on('pause',
+                //     //       function() {
+                                
+                //     //       });
+                //    else /*if ($(e.currentTarget).hasClass('vjs-paused')) */{
+                //        console.log(pausetime)
+                //        console.log(duration)
+                //        console.log(count)
+                //        console.log(pausetime + count)
+
+                //        if (duration <= pausetime + count) {
+                //            findVIdSeekTo();
+                //            myVideo.src({
+                //                "techOrder": ['youtube'],
+                //                "type": "video/" + ext,
+                //                "src": "https://www.youtube.com/watch?v=" + myVideoId,
+                //                "youtube": { "iv_load_policy": 3 }
+                //            });
+
+                //            var bim = parseInt(seekToTime / 1000);
+                //            if (bim >= 0)
+                //                myVideo.currentTime(bim);
+                //            myVideo.play();
+                //        } else {
+                //            myVideo.currentTime(pausetime + count);
+                //            myVideo.play();
+                //        }
+                //        count = 0;
+                //        console.log(count)
+                //    }
+                //});
+                ////$('bigPlayButton').on('click',
+                ////    function() {
+                ////        findVIdSeekTo();
+                ////        myVideo.src({
+                ////            "techOrder": ['youtube'],
+                ////            "type": "video/" + ext,
+                ////            "src": "https://www.youtube.com/watch?v=" + myVideoId,
+                ////            "youtube": { "iv_load_policy": 3 }
+                ////        });
+
+                ////        var bim = parseInt(seekToTime / 1000);
+                ////        if (bim >= 0)
+                ////            myVideo.currentTime(bim);
+                ////        myVideo.play();
+                ////    });
+                }
+            });
+
+
+        }); // jQuery(function($) END
+
+        var ext = "youtube";
+        var poster = 'https://img.youtube.com/vi/aqz-KE-bpKQ/maxresdefault.jpg';
+        function loadVideo() {
+            myVideo.src({
+                "techOrder": ['youtube'],
+                "type": "video/" + ext,
+                "src": "https://www.youtube.com/watch?v=" + myVideoId,
+                "youtube": { "iv_load_policy": 3 }
+            });
+
+            if (poster) myVideo.poster(poster);
+            myVideo.on('loadedmetadata', function () {
+                var bim = parseInt(seekToTime / 1000);
+                if (bim >= 0)
+                    myVideo.currentTime(bim);
+                myVideo.play();
+            });
+        }
+
+        function findVIdSeekTo() {
+            //console.log(result);
+            //result.forEach(findVideoAndSeekTo);
+            for (var i = 0; i < result.length; i++) {
+                if (moment(Date.now()).isBetween(result[i]["startTime"], result[i]["endTime"])) {
+                    seekToTime = moment(Date.now()).diff(moment(result[i]["startTime"]));
+                    myVideoId = result[i]["videoId"];
+                    console.log(seekToTime, 'in findVIdSeekTo()');
+                    console.log(myVideoId, 'in findVIdSeekTo()');
+                } else {
+                    if (moment(Date.now()).isBefore(result[i]["startTime"])) {
+                        futureVideoList[futureVideoList.length] = moment(result[i]["startTime"]).diff(moment(Date.now()));
+                    }
+                }
+            }
+            //console.log(Math.round(futureVideoList[0] / 60000));
+            //remainTimeToNextVideo = futureVideoList[0];
+            //console.log(remainTimeToNextVideo)
+            console.log('here in findfideoidseekto')
+        }
+
+        function findVideoAndSeekTo(item, index) {
+            if (moment(Date.now()).isBetween(item["startTime"], item["endTime"])) {
+                seekToTime = moment(Date.now()).diff(moment(item["startTime"]));
+                myVideoId = item["videoId"];
+                console.log(seekToTime, 'in function in if isbetween');
+                console.log(myVideoId, 'in function in if isbetween');
+            }
+            if (myVideoId == undefined) {
+                if (moment(Date.now()).isBefore(item["startTime"])) {
+                    futureVideoList.push(moment(item["startTime"]).diff(moment(Date.now())));
+                }
+            }
+        }
+
+                    //var vdId = "TwBWz6Sf5rs";
+                    //var divId = document.getElementById("divId");
+                    //var outPut = '<video id="vid1" class="video-js vjs-default-skin vjs-big-play-centered" controls autoplay width="640" height="350" '
+                    //outPut += 'data-setup=\'{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "https://www.youtube.com/watch?v=' + myVideoId + '"}] }\'>';
+
+                    //divId.innerHTML = outPut;
+
+
+
+                    //myVideo.currentTime(120);
+                    //myVideo.play();
+    </script>
 </body>
 </html>
