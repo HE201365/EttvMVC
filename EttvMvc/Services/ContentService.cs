@@ -13,6 +13,7 @@ using EttvMvc.Models;
 using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace EttvMvc.Services
 {
@@ -121,40 +122,74 @@ namespace EttvMvc.Services
 
         public VideoContent MakeContentFromUrl(string url)
         {
-            string videoId = MakeVideoIdFromUrl(url);
+            //string videoId = MakeVideoIdFromUrl(url);
+            Match youtubeMatch = YoutubeVideoRegex.Match(url);
+            Match vimeoMatch = VimeoVideoRegex.Match(url);
+            string videoId = string.Empty;
+            VideoContent newVC = new VideoContent();
 
-            string apiKey = WebConfigurationManager.AppSettings["ApiKey"];
-            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
+            if (youtubeMatch.Success)
             {
-                ApiKey = apiKey, // "AIzaSyA5RbAktplJsFLOdP8uI9s_RLEidsBTL34",
-                ApplicationName = this.GetType().ToString()
-            });
-            var videoListRequest = youtubeService.Videos.List("snippet,contentDetails,statistics");
-            videoListRequest.Id = videoId;
-            var videoListResponse = videoListRequest.Execute();
+                videoId = youtubeMatch.Groups[1].Value;
 
-            return new VideoContent
+                string apiKey = WebConfigurationManager.AppSettings["ApiKey"];
+                var youtubeService = new YouTubeService(new BaseClientService.Initializer()
+                {
+                    ApiKey = apiKey, // "AIzaSyA5RbAktplJsFLOdP8uI9s_RLEidsBTL34",
+                    ApplicationName = this.GetType().ToString()
+                });
+                var videoListRequest = youtubeService.Videos.List("snippet,contentDetails,statistics");
+                videoListRequest.Id = videoId;
+                var videoListResponse = videoListRequest.Execute();
+
+                newVC.VideoId = videoListResponse.Items[0].Id.ToString();
+                newVC.Title = videoListResponse.Items[0].Snippet.Title.ToString();
+                newVC.Tag = videoListResponse.Items[0].Snippet.Tags[0].ToString();
+                newVC.Duration = convertYouTubeDuration(videoListResponse.Items[0].ContentDetails.Duration);
+                newVC.Thumbnail = videoListResponse.Items[0].Snippet.Thumbnails.Default__.Url.ToString();
+                newVC.AppUserId = UserSession.CurrentUser.Id;
+
+            }
+
+
+            if (vimeoMatch.Success)
             {
-                VideoId = videoListResponse.Items[0].Id.ToString(),
-                Title = videoListResponse.Items[0].Snippet.Title.ToString(),
-                Tag = videoListResponse.Items[0].Snippet.Tags[0].ToString(),
-                Duration = convertYouTubeDuration(videoListResponse.Items[0].ContentDetails.Duration),
-                Thumbnail = videoListResponse.Items[0].Snippet.Thumbnails.Default__.Url.ToString(),
-                AppUserId = UserSession.CurrentUser.Id
-            };
+                videoId = vimeoMatch.Groups[1].Value;
+                using (HttpClient client = new HttpClient())
+                {
+                    using (HttpResponseMessage response = client.GetAsync($"http://vimeo.com/api/v2/video/{videoId}.json").Result)
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string json = response.Content.ReadAsStringAsync().Result;
+                         var data = JsonConvert.DeserializeObject(response.Content.ReadAsStringAsync().Result);
+                         JArray o = JArray.Parse(json);
+                            newVC.VideoId = videoId;
+                            newVC.Title = (string)o[0]["title"];
+                            newVC.Tag = ((string)o[0]["tags"]).Split(',')[0].ToString();
+                            newVC.Duration = (int)o[0]["duration"] * 1000;
+                            newVC.Thumbnail = (string)o[0]["thumbnail_small"];
+                            newVC.AppUserId = UserSession.CurrentUser.Id;
+                        }
+                    }
+                }
+
+            }
+
+            return newVC;
         }
 
         public string MakeVideoIdFromUrl(string url)
         {
             Match youtubeMatch = YoutubeVideoRegex.Match(url);
             Match vimeoMatch = VimeoVideoRegex.Match(url);
-            string id = string.Empty;
+            string videoId = string.Empty;
             if (youtubeMatch.Success)
-                id = youtubeMatch.Groups[1].Value;
+                videoId = youtubeMatch.Groups[1].Value;
 
             if (vimeoMatch.Success)
-                id = vimeoMatch.Groups[1].Value;
-            return id;
+                videoId = vimeoMatch.Groups[1].Value;
+            return videoId;
         }
 
         public int convertYouTubeDuration(string yt_duration)

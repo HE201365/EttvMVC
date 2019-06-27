@@ -17,7 +17,7 @@ namespace EttvMvc.Controllers
         }
         public ActionResult Index()
         {
-            IEnumerable<ChannelProgram> chp = _channelProgramService.GetAll().Where(c => c.StartTime.Day <= DateTime.Now.Day);
+            IEnumerable<ChannelProgram> chp = _channelProgramService.GetAll().Where(c => c.StartTime.Day <= DateTime.Now.Day).OrderBy(x=>x.StartTime);
             return View(chp);
         }
 

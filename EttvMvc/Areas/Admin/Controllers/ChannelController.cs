@@ -24,7 +24,7 @@ namespace EttvMvc.Areas.Admin.Controllers
         // GET: Admin/Channel
         public ActionResult Index(string tag, DateTime? startDate)
         {
-            IEnumerable<ChannelProgram> channelPrograms = _channelProgramService.GetAll();
+            IEnumerable<ChannelProgram> channelPrograms = _channelProgramService.GetAll().OrderBy(x => x.StartTime);
             IEnumerable<VideoContent> videoContents = _contentService.GetAll();
 
             if (!string.IsNullOrEmpty(tag))
@@ -59,7 +59,7 @@ namespace EttvMvc.Areas.Admin.Controllers
             var id = Url.RequestContext.RouteData.Values["id"].ToString();
             _channelProgramService.AddProgram(id, start);
 
-            IEnumerable<ChannelProgram> channelPrograms = _channelProgramService.GetAll();
+            IEnumerable<ChannelProgram> channelPrograms = _channelProgramService.GetAll().OrderBy(x=>x.StartTime);
             IEnumerable<VideoContent> videoContents = _contentService.GetAll();
 
             ChannelPageViewModel channelPageViewModel = new ChannelPageViewModel

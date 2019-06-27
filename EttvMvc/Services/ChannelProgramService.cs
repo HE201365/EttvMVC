@@ -6,6 +6,7 @@ using System.Text;
 using EttvMvc.Helps;
 using EttvMvc.Models;
 using Newtonsoft.Json;
+using EttvMvc.Helps;
 
 namespace EttvMvc.Services
 {
@@ -36,35 +37,44 @@ namespace EttvMvc.Services
 
         public bool AddProgram(string videoId, DateTime starTime)
         {
-            VideoContent currentContent = _contentService.GetAll().Where(v => v.VideoId == videoId).SingleOrDefault();
-            ChannelProgram cp = new ChannelProgram
-            {
-                StartTime = starTime,
-                EndTime = starTime.AddMilliseconds(currentContent.Duration),
-                AppUserId = UserSession.CurrentUser.Id,
-                VideoContentVideoId = videoId
-            };
             var status = false;
-            try
+            int result = DateTime.Compare(starTime.TrimSeconds(), DateTime.Now.TrimSeconds()); 
+            // if startTime is earlier than DateTime.Now
+            if (result < 0 || GetAll().Any(x => x.StartTime.TrimSeconds() < starTime.TrimSeconds() && x.EndTime.TrimSeconds() > starTime.TrimSeconds()))
             {
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri("https://localhost:44384/Api/");
-                string JsonString = JsonConvert.SerializeObject(cp);
-                StringContent content = new StringContent(JsonString, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = client.PostAsync("channelprogram/", content).Result;
-
-                if (response.IsSuccessStatusCode)
-                {
-                    status = true;
-                }
-
                 return status;
             }
-            catch (Exception ex)
+            else
             {
-                //TODO loging ....
-                Console.WriteLine(ex);
-                return false;
+                VideoContent currentContent = _contentService.GetAll().Where(v => v.VideoId == videoId).SingleOrDefault();
+                ChannelProgram cp = new ChannelProgram
+                {
+                    StartTime = starTime,
+                    EndTime = starTime.AddMilliseconds(currentContent.Duration),
+                    AppUserId = UserSession.CurrentUser.Id,
+                    VideoContentVideoId = videoId
+                };
+                try
+                {
+                    HttpClient client = new HttpClient();
+                    client.BaseAddress = new Uri("https://localhost:44384/Api/");
+                    string JsonString = JsonConvert.SerializeObject(cp);
+                    StringContent content = new StringContent(JsonString, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = client.PostAsync("channelprogram/", content).Result;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        status = true;
+                    }
+
+                    return status;
+                }
+                catch (Exception ex)
+                {
+                    //TODO loging ....
+                    Console.WriteLine(ex);
+                    return false;
+                }
             }
         }
 
