@@ -10,5 +10,7 @@ namespace EttvMvc.Models
         public string Tag { get; set; }
         public string Thumbnail { get; set; }
         public int AppUserId { get; set; }
+        public string SrcUri { get; set; }
+        public string SrcExtention { get; set; }
     }
 }

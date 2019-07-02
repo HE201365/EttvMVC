@@ -9,8 +9,11 @@
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" />
     <link rel="stylesheet" href="@Url.Content("~/Content/EttvTemplate/")css/style.css" />
-    @*vjs style*@
-    <link href="https://unpkg.com/video.js/dist/video-js.min.css" rel="stylesheet">
+
+    @*<link href="https://unpkg.com/video.js/dist/video-js.min.css" rel="stylesheet">*@
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/7.3.0/video-js.min.css" rel="stylesheet">
+
+    @*<link href="https://vjs.zencdn.net/5.20.1/video-js.css" rel="stylesheet">*@
     <style>
         #progressBar {
             width: 660px;
@@ -45,8 +48,12 @@
     @*<script src="@Url.Content("~/Content/EttvTemplate/")js/YTPlayer.js"></script>*@
 
 
-    <script src="https://unpkg.com/video.js/dist/video.min.js"></script>
+    @*<script src="https://unpkg.com/video.js/dist/video.min.js"></script>*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/7.3.0/video.min.js"></script>
+    @*<script src='https://vjs.zencdn.net/5.20.1/video.js'></script>*@
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-youtube/2.6.0/Youtube.min.js"></script>
+    <script src="~/Content/EttvTemplate/videojs-vimeo.min.js"></script>
 
     <script>
         var seekToTime;
@@ -68,6 +75,8 @@
                             videoId: data[i]["VideoContent"]["VideoId"],
                             title: data[i]["VideoContent"]["Title"],
                             duration: data[i]["VideoContent"]["Duration"],
+                            srcUri: data[i]["VideoContent"]["SrcUri"],
+                            srcExtention: data[i]["VideoContent"]["SrcExtention"],
                             startTime: moment(data[i]["StartTime"]),
                             endTime: moment(data[i]["EndTime"])
                         });
@@ -105,7 +114,6 @@
                 var timeremainingForFirstNextVideo = futureVideoList[0];
                 if (timeremainingForFirstNextVideo > 0) { setTimeout(function () { location.reload(); }, ms); }
                 myVideo = videojs("vid1");
-                loadVideo();
                 //myVideo = videojs('vid1', {
                 //    //techOrder: ["youtube"],
                 //    autoplay: true,
@@ -115,14 +123,30 @@
                 //    //    src: "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
                 //    //}]
                 //});
+
+                loadVideo();
                 myVideo.on('ended', function () {
                     findVIdSeekTo();
-                    myVideo.src({
-                        "techOrder": ['youtube'],
-                        "type": "video/" + ext,
-                        "src": "https://www.youtube.com/watch?v=" + myVideoId,
-                        "youtube": { "iv_load_policy": 3 }
-                    });
+                    myVideo.src(
+                        //[
+                        //    {
+                        //        "techOrder": ['youtube'],
+                        //        "type": "video/youtube",
+                        //        "src": srcUri + myVideoId,
+                        //        "youtube": { "iv_load_policy": 3 }
+                        //    },
+                        //    {
+                        //        "techOrder": ['vimeo'],
+                        //        "type": "video/vimeo",
+                        //        "src": srcUri + myVideoId,
+                        //    }
+                        //]
+                        {
+                            "techOrder": [ext],
+                            "type": "video/" + ext,
+                            "src": srcUri + myVideoId,
+                        }
+                    );
 
                     var bim = parseInt(seekToTime / 1000);
                     if (bim >= 0)
@@ -131,90 +155,127 @@
                     //myVideo.load();
                 });
                 function pausePlayTest() {
-                                    //myVideo.on("pause", function () {
-                //    alert('paused');
-                //});
-                
-                ////var pausetime;
-                ////var duration;
-                ////var count=0;
-                //$('.vjs-play-control').on('click', function (e) {
-                //    console.log('Play/Pause button clicked.');
-                //    console.log($(e.currentTarget).attr('class'));
-                //    console.log($(e.currentTarget).hasClass('vjs-paused'));
-                //    function countPlusOne() {
-                //        count=count+1;
-                //    }
-                //    if ($(e.currentTarget).hasClass('vjs-playing')) {
-                //        duration = myVideo.duration();
-                //        pausetime = myVideo.currentTime();
-                //        count = 0;
-                //        setInterval(countPlusOne, 1000);
-                //        console.log(pausetime)
-                //        console.log(duration)
-                //        console.log(count)
-                //    }
-                //     //myVideo.on('pause',
-                //     //       function() {
-                                
-                //     //       });
-                //    else /*if ($(e.currentTarget).hasClass('vjs-paused')) */{
-                //        console.log(pausetime)
-                //        console.log(duration)
-                //        console.log(count)
-                //        console.log(pausetime + count)
+                    //myVideo.on("pause", function () {
+                    //    alert('paused');
+                    //});
 
-                //        if (duration <= pausetime + count) {
-                //            findVIdSeekTo();
-                //            myVideo.src({
-                //                "techOrder": ['youtube'],
-                //                "type": "video/" + ext,
-                //                "src": "https://www.youtube.com/watch?v=" + myVideoId,
-                //                "youtube": { "iv_load_policy": 3 }
-                //            });
+                    ////var pausetime;
+                    ////var duration;
+                    ////var count=0;
+                    //$('.vjs-play-control').on('click', function (e) {
+                    //    console.log('Play/Pause button clicked.');
+                    //    console.log($(e.currentTarget).attr('class'));
+                    //    console.log($(e.currentTarget).hasClass('vjs-paused'));
+                    //    function countPlusOne() {
+                    //        count=count+1;
+                    //    }
+                    //    if ($(e.currentTarget).hasClass('vjs-playing')) {
+                    //        duration = myVideo.duration();
+                    //        pausetime = myVideo.currentTime();
+                    //        count = 0;
+                    //        setInterval(countPlusOne, 1000);
+                    //        console.log(pausetime)
+                    //        console.log(duration)
+                    //        console.log(count)
+                    //    }
+                    //     //myVideo.on('pause',
+                    //     //       function() {
 
-                //            var bim = parseInt(seekToTime / 1000);
-                //            if (bim >= 0)
-                //                myVideo.currentTime(bim);
-                //            myVideo.play();
-                //        } else {
-                //            myVideo.currentTime(pausetime + count);
-                //            myVideo.play();
-                //        }
-                //        count = 0;
-                //        console.log(count)
-                //    }
-                //});
-                ////$('bigPlayButton').on('click',
-                ////    function() {
-                ////        findVIdSeekTo();
-                ////        myVideo.src({
-                ////            "techOrder": ['youtube'],
-                ////            "type": "video/" + ext,
-                ////            "src": "https://www.youtube.com/watch?v=" + myVideoId,
-                ////            "youtube": { "iv_load_policy": 3 }
-                ////        });
+                    //     //       });
+                    //    else /*if ($(e.currentTarget).hasClass('vjs-paused')) */{
+                    //        console.log(pausetime)
+                    //        console.log(duration)
+                    //        console.log(count)
+                    //        console.log(pausetime + count)
 
-                ////        var bim = parseInt(seekToTime / 1000);
-                ////        if (bim >= 0)
-                ////            myVideo.currentTime(bim);
-                ////        myVideo.play();
-                ////    });
+                    //        if (duration <= pausetime + count) {
+                    //            findVIdSeekTo();
+                    //            myVideo.src({
+                    //                "techOrder": ['youtube'],
+                    //                "type": "video/" + ext,
+                    //                "src": "https://www.youtube.com/watch?v=" + myVideoId,
+                    //                "youtube": { "iv_load_policy": 3 }
+                    //            });
+
+                    //            var bim = parseInt(seekToTime / 1000);
+                    //            if (bim >= 0)
+                    //                myVideo.currentTime(bim);
+                    //            myVideo.play();
+                    //        } else {
+                    //            myVideo.currentTime(pausetime + count);
+                    //            myVideo.play();
+                    //        }
+                    //        count = 0;
+                    //        console.log(count)
+                    //    }
+                    //});
+                    ////$('bigPlayButton').on('click',
+                    ////    function() {
+                    ////        findVIdSeekTo();
+                    ////        myVideo.src({
+                    ////            "techOrder": ['youtube'],
+                    ////            "type": "video/" + ext,
+                    ////            "src": "https://www.youtube.com/watch?v=" + myVideoId,
+                    ////            "youtube": { "iv_load_policy": 3 }
+                    ////        });
+
+                    ////        var bim = parseInt(seekToTime / 1000);
+                    ////        if (bim >= 0)
+                    ////            myVideo.currentTime(bim);
+                    ////        myVideo.play();
+                    ////    });
                 }
             });
 
 
         }); // jQuery(function($) END
 
-        var ext = "youtube";
+        var ext;// = "youtube";
+        var srcUri;
         var poster = 'https://img.youtube.com/vi/aqz-KE-bpKQ/maxresdefault.jpg';
         function loadVideo() {
-            myVideo.src({
-                "techOrder": ['youtube'],
-                "type": "video/" + ext,
-                "src": "https://www.youtube.com/watch?v=" + myVideoId,
-                "youtube": { "iv_load_policy": 3 }
-            });
+
+            if (ext === "vimeo") {
+                //var options = {
+                //    id: myVideoId,
+                //    width: 640,
+                //    autoplay:1
+                //};
+                //console.log('played the video!????', myVideoId);
+
+                //var player = new Vimeo.Player('divId', options);
+                //player.setVolume(100);
+
+                //player.on('play', function () {
+                //    console.log('played the video!');
+                //});
+                document.getElementById('divId').innerHTML = '<iframe src="//player.vimeo.com/video/' + myVideoId + '?autoplay=1#t=' + parseInt(seekToTime / 1000) +
+                    ' title=1&amp;byline=1&amp;portrait=1" width="643" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+
+                var iframe = document.querySelector('iframe');
+                var player = new Vimeo.Player(iframe);
+
+                player.on('play', function () {
+                    console.log('Played the video');
+                });
+
+                player.getVideoTitle().then(function (title) {
+                    console.log('title:', title);
+                });
+
+                //$('#divId').html('<iframe src="http://player.vimeo.com/video/'+myVideoId +'?
+                //title=1&amp;byline=1&amp;portrait=1" width="643"
+                //height="360" frameborder="0"></iframe>');
+            }
+
+            myVideo.src(
+                {
+                    "techOrder": [ext],
+                    "type": "video/" + ext,
+                    "src": srcUri + myVideoId,
+                    ext: { "iv_load_policy": 1 }
+                }
+            );
 
             if (poster) myVideo.poster(poster);
             myVideo.on('loadedmetadata', function () {
@@ -232,6 +293,8 @@
                 if (moment(Date.now()).isBetween(result[i]["startTime"], result[i]["endTime"])) {
                     seekToTime = moment(Date.now()).diff(moment(result[i]["startTime"]));
                     myVideoId = result[i]["videoId"];
+                    ext = result[i]["srcExtention"];
+                    srcUri = result[i]["srcUri"];
                     console.log(seekToTime, 'in findVIdSeekTo()');
                     console.log(myVideoId, 'in findVIdSeekTo()');
                 } else {
@@ -260,17 +323,19 @@
             }
         }
 
-                    //var vdId = "TwBWz6Sf5rs";
-                    //var divId = document.getElementById("divId");
-                    //var outPut = '<video id="vid1" class="video-js vjs-default-skin vjs-big-play-centered" controls autoplay width="640" height="350" '
-                    //outPut += 'data-setup=\'{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "https://www.youtube.com/watch?v=' + myVideoId + '"}] }\'>';
+                                                            //var vdId = "TwBWz6Sf5rs";
+                                                            //var divId = document.getElementById("divId");
+                                                            //var outPut = '<video id="vid1" class="video-js vjs-default-skin vjs-big-play-centered" controls autoplay width="640" height="350" '
+                                                            //outPut += 'data-setup=\'{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "https://www.youtube.com/watch?v=' + myVideoId + '"}] }\'>';
 
-                    //divId.innerHTML = outPut;
+                                                            //divId.innerHTML = outPut;
 
 
 
-                    //myVideo.currentTime(120);
-                    //myVideo.play();
+                                                            //myVideo.currentTime(120);
+                                                            //myVideo.play();
     </script>
+
+
 </body>
 </html>

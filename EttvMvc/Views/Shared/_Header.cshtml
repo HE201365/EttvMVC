@@ -14,38 +14,39 @@
     </div>
     <div class="showcase-content">
         @*<iframe width="660" height="315" src="https://www.youtube.com/embed/SJ5oQFQTzb4" frameborder="0"
-        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>*@
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>*@
         <div id="remainingTime"></div>
         @*<div class="button-top">
-            <div class="buttonsGroup">
-                <button id="playTop" class="button button-rounded"><i class="fas fa-play"></i></button>
-                <button id="pauseTop" class="button button-rounded"><i class="fas fa-pause"></i></button>
-                <button id="fullscreenTop" class="button button-rounded"><i class="fas fa-arrows-alt"></i></button>
+                <div class="buttonsGroup">
+                    <button id="playTop" class="button button-rounded"><i class="fas fa-play"></i></button>
+                    <button id="pauseTop" class="button button-rounded"><i class="fas fa-pause"></i></button>
+                    <button id="fullscreenTop" class="button button-rounded"><i class="fas fa-arrows-alt"></i></button>
+                </div>
+                <div style="margin: 0.5em"></div>
             </div>
-            <div style="margin: 0.5em"></div>
-        </div>
-        <div class="now_playing">
-            <div class="n_p_video_container" id="test">
-                <div class="n_p_video_play"></div>
-                <div id="ytplayer"></div>
-            </div>
+            <div class="now_playing">
+                <div class="n_p_video_container" id="test">
+                    <div class="n_p_video_play"></div>
+                    <div id="ytplayer"></div>
+                </div>
 
-            <div class="n_p_video_progressbar">
-                <div id="progressBar">
-                    <div>
+                <div class="n_p_video_progressbar">
+                    <div id="progressBar">
+                        <div>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="button-bottom">
+                <div style="margin: 0.1em"></div>
+                <div class="buttonsGroup">
+                    <button id="playBottom" class="button button-rounded"><i class="fas fa-play"></i></button>
+                    <button id="pauseBottom" class="button button-rounded"><i class="fas fa-pause"></i></button>
+                    <button id="fullscreenBottom" class="button button-rounded"><i class="fas fa-arrows-alt"></i></button>
+                </div>
+            </div>*@
+        <div id="divId">
+            <video id="vid1" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto" width="660" height="280" @*data-setup='{"techOrder": ["youtube", "vimeo"]}'*@></video>
         </div>
-        <div class="button-bottom">
-            <div style="margin: 0.1em"></div>
-            <div class="buttonsGroup">
-                <button id="playBottom" class="button button-rounded"><i class="fas fa-play"></i></button>
-                <button id="pauseBottom" class="button button-rounded"><i class="fas fa-pause"></i></button>
-                <button id="fullscreenBottom" class="button button-rounded"><i class="fas fa-arrows-alt"></i></button>
-            </div>
-        </div>*@
-        @*<div id="divId"></div>*@
-        <video id="vid1" class="video-js vjs-default-skin vjs-big-play-centered" controls width="660" height="350"></video>
     </div>
 </header>

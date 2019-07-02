@@ -148,6 +148,8 @@ namespace EttvMvc.Services
                 newVC.Duration = convertYouTubeDuration(videoListResponse.Items[0].ContentDetails.Duration);
                 newVC.Thumbnail = videoListResponse.Items[0].Snippet.Thumbnails.Default__.Url.ToString();
                 newVC.AppUserId = UserSession.CurrentUser.Id;
+                newVC.SrcUri = url.Substring(0, url.Length - videoId.Length);
+                newVC.SrcExtention = "youtube";
 
             }
 
@@ -157,7 +159,7 @@ namespace EttvMvc.Services
                 videoId = vimeoMatch.Groups[1].Value;
                 using (HttpClient client = new HttpClient())
                 {
-                    using (HttpResponseMessage response = client.GetAsync($"http://vimeo.com/api/v2/video/{videoId}.json").Result)
+                    using (HttpResponseMessage response = client.GetAsync($"https://vimeo.com/api/v2/video/{videoId}.json").Result)
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -170,6 +172,8 @@ namespace EttvMvc.Services
                             newVC.Duration = (int)o[0]["duration"] * 1000;
                             newVC.Thumbnail = (string)o[0]["thumbnail_small"];
                             newVC.AppUserId = UserSession.CurrentUser.Id;
+                            newVC.SrcUri = url.Substring(0, url.Length - videoId.Length);
+                            newVC.SrcExtention = "vimeo";
                         }
                     }
                 }
