@@ -52,7 +52,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/7.3.0/video.min.js"></script>
     @*<script src='https://vjs.zencdn.net/5.20.1/video.js'></script>*@
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-youtube/2.6.0/Youtube.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-youtube/2.6.0/Youtube.min.js"></script>
+@*vimeo.min.js is not video js, is just an api from vimeo*@
     <script src="~/Content/EttvTemplate/videojs-vimeo.min.js"></script>
 
     <script>
@@ -230,9 +231,50 @@
 
         }); // jQuery(function($) END
 
+
+
+        //function handleMediaChange (mediaQueryList) {
+        //    if (mediaQueryList.matches) {
+        //        playerWidth = 660;
+        //        playerHeight = 350;
+        //    }
+        //    else {
+        //        playerWidth = 300;
+        //        playerHeight = 200;
+        //    }
+        //}
+        //// media query event handler
+        //if (matchMedia) {
+        //    const mq = window.matchMedia("(min-width: 700px)");
+        //    mq.addListener(handleMediaChange);
+        //    handleMediaChange(mq);
+        //}
+
+        var width = $(window).width();
+        if (width < 700) {
+            playerWidth = 400;
+            playerHeight = 250;
+        } else {
+            playerWidth = 660;
+            playerHeight = 350;
+        }
+        $(window).resize(function() {
+            if ($(window).width() != width) {
+                if ($(window).width() < 700) {
+                    playerWidth = 400;
+                    playerHeight = 250;
+                } else {
+                    playerWidth = 660;
+                    playerHeight = 350;
+                }
+            }
+            loadVideo();
+        });
+
         var ext;// = "youtube";
         var srcUri;
         var poster = 'https://img.youtube.com/vi/aqz-KE-bpKQ/maxresdefault.jpg';
+        var playerWidth, playerHeight;
         function loadVideo() {
 
             if (ext === "vimeo") {
@@ -250,17 +292,23 @@
                 //    console.log('played the video!');
                 //});
                 document.getElementById('divId').innerHTML = '<iframe src="//player.vimeo.com/video/' + myVideoId + '?autoplay=1#t=' + parseInt(seekToTime / 1000) +
-                    ' title=1&amp;byline=1&amp;portrait=1" width="643" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+                    ' title=1&amp;byline=1&amp;portrait=1" width="' + playerWidth + '" height="' + playerHeight + '" frameborder="0" allow="autoplay" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
 
                 var iframe = document.querySelector('iframe');
-                var player = new Vimeo.Player(iframe);
+                var player = new Vimeo.Player(iframe, {controls:0});
 
                 player.on('play', function () {
-                    console.log('Played the video');
+                    console.log('Played the video', playerWidth, playerHeight);
                 });
 
                 player.getVideoTitle().then(function (title) {
                     console.log('title:', title);
+                });
+                //TODO player.ended 
+                //TODO try to load without iframe here
+                player.on('ended', function () {
+                    findVIdSeekTo();
+                    loadVideo();
                 });
 
                 //$('#divId').html('<iframe src="http://player.vimeo.com/video/'+myVideoId +'?
@@ -273,7 +321,8 @@
                     "techOrder": [ext],
                     "type": "video/" + ext,
                     "src": srcUri + myVideoId,
-                    ext: { "iv_load_policy": 1 }
+                    ext: { "iv_load_policy": 1 },
+                    "fluid": true
                 }
             );
 
