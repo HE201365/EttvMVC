@@ -20,6 +20,7 @@ namespace EttvMvc.Services
                 HttpClient client = new HttpClient();
                 //client.BaseAddress = new Uri("https://localhost:44384/api/user/");
                 client.BaseAddress = new Uri("https://ettv.azurewebsites.net/api/user/");
+                //client.BaseAddress = new Uri("http://localhost:5000/api/user/");
                 string jsonString = JsonConvert.SerializeObject(viewModel);
                 StringContent content = new StringContent(jsonString, Encoding.UTF8, "application/json");
 

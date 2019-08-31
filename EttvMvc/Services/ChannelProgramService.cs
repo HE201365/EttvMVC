@@ -21,8 +21,9 @@ namespace EttvMvc.Services
         public IEnumerable<ChannelProgram> GetAll()
         {
             HttpClient client = new HttpClient();
-            //client.BaseAddress = new Uri("https://localhost:44384/Api/"); 
+            //client.BaseAddress = new Uri("https://localhost:44384/Api/");
             client.BaseAddress = new Uri("https://ettv.azurewebsites.net/api/");
+            //client.BaseAddress = new Uri("http://localhost:5000/api/");
             HttpResponseMessage response = client.GetAsync("ChannelProgram").Result;
 
             List<ChannelProgram> results = new List<ChannelProgram>();
@@ -38,9 +39,8 @@ namespace EttvMvc.Services
         public bool AddProgram(string videoId, DateTime starTime)
         {
             var status = false;
-            int result = DateTime.Compare(starTime.TrimSeconds(), DateTime.Now.TrimSeconds()); 
-            // if startTime is earlier than DateTime.Now
-            if (result < 0 || GetAll().Any(x => x.StartTime.TrimSeconds() < starTime.TrimSeconds() && x.EndTime.TrimSeconds() > starTime.TrimSeconds()))
+            // if startTime is earlier than DateTime.Now ??
+            if ( GetAll().Any(x => x.StartTime.TrimSeconds() < starTime.TrimSeconds() && x.EndTime.TrimSeconds() > starTime.TrimSeconds()))
             {
                 return status;
             }
@@ -59,6 +59,7 @@ namespace EttvMvc.Services
                     HttpClient client = new HttpClient();
                     //client.BaseAddress = new Uri("https://localhost:44384/Api/");
                     client.BaseAddress = new Uri("https://ettv.azurewebsites.net/api/");
+                    //client.BaseAddress = new Uri("http://localhost:5000/api/");
                     string JsonString = JsonConvert.SerializeObject(cp);
                     StringContent content = new StringContent(JsonString, Encoding.UTF8, "application/json");
                     HttpResponseMessage response = client.PostAsync("channelprogram/", content).Result;
@@ -72,7 +73,6 @@ namespace EttvMvc.Services
                 }
                 catch (Exception ex)
                 {
-                    //TODO loging ....
                     Console.WriteLine(ex);
                     return false;
                 }
@@ -87,6 +87,7 @@ namespace EttvMvc.Services
                 HttpClient client = new HttpClient();
                 //client.BaseAddress = new Uri("https://localhost:44384/api/");
                 client.BaseAddress = new Uri("https://ettv.azurewebsites.net/api/");
+                //client.BaseAddress = new Uri("http://localhost:5000/api/");
                 HttpResponseMessage response = client.DeleteAsync("channelprogram/" + id).Result;
 
                 if (response.IsSuccessStatusCode)

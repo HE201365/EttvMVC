@@ -52,8 +52,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/7.3.0/video.min.js"></script>
     @*<script src='https://vjs.zencdn.net/5.20.1/video.js'></script>*@
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-youtube/2.6.0/Youtube.min.js"></script>
-@*vimeo.min.js is not video js, is just an api from vimeo*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-youtube/2.6.0/Youtube.js"></script>
+    @*vimeo.min.js is not video js, is just an api from vimeo*@
     <script src="~/Content/EttvTemplate/videojs-vimeo.min.js"></script>
 
     <script>
@@ -65,8 +65,12 @@
 
         function myAjax() {
             $.ajax({
-                type: "GET",
-                url: "/Home/GetIndexContentJsonResult",
+                type: "POST",
+                //url: "/Home/GetIndexContentJsonResult",
+                url: '@Url.Action("GetIndexContentJsonResult","Home")',
+                dataType: 'json',
+                data: '{now:' + Date.now() + '}',
+                contentType: "application/json; charset=utf-8",
                 success: function (data) {
                     //console.log(data)
                     //console.log(data[0]["VideoContent"]["VideoId"]);
@@ -78,8 +82,8 @@
                             duration: data[i]["VideoContent"]["Duration"],
                             srcUri: data[i]["VideoContent"]["SrcUri"],
                             srcExtention: data[i]["VideoContent"]["SrcExtention"],
-                            startTime: moment(data[i]["StartTime"]),
-                            endTime: moment(data[i]["EndTime"])
+                            startTime: moment(data[i]["StartTime"]).add(-(moment(data[i]["StartTime"]).utcOffset()), 'm'), //moment.parseZone((moment(data[i]["StartTime"]).add(-(moment().utcOffset()), 'm'))).utc()/*.utcOffset('+1000')*/.format(),
+                            endTime: moment(data[i]["EndTime"]).add(-(moment(data[i]["EndTime"]).utcOffset()), 'm')//moment.parseZone((moment(data[i]["EndTime"]).add(-(moment().utcOffset()),'m'))).utc()/*.utcOffset('+1000')*/.format()
                         });
                     }
                 }
@@ -104,7 +108,7 @@
             myAjax();
             $(document).ajaxSuccess(function () {
                 findVIdSeekTo();
-                console.log(result)
+                console.log(result);
                 //findVIdSeekTo();
                 var ms = futureVideoList[0];
                 if (myVideoId == undefined && ms > 0) {
@@ -115,33 +119,11 @@
                 var timeremainingForFirstNextVideo = futureVideoList[0];
                 if (timeremainingForFirstNextVideo > 0) { setTimeout(function () { location.reload(); }, ms); }
                 myVideo = videojs("vid1");
-                //myVideo = videojs('vid1', {
-                //    //techOrder: ["youtube"],
-                //    autoplay: true,
-                //    //youtube: { "iv_load_policy": 3 },
-                //    //sources: [{
-                //    //    type: "video/mp4",
-                //    //    src: "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
-                //    //}]
-                //});
 
                 loadVideo();
                 myVideo.on('ended', function () {
                     findVIdSeekTo();
                     myVideo.src(
-                        //[
-                        //    {
-                        //        "techOrder": ['youtube'],
-                        //        "type": "video/youtube",
-                        //        "src": srcUri + myVideoId,
-                        //        "youtube": { "iv_load_policy": 3 }
-                        //    },
-                        //    {
-                        //        "techOrder": ['vimeo'],
-                        //        "type": "video/vimeo",
-                        //        "src": srcUri + myVideoId,
-                        //    }
-                        //]
                         {
                             "techOrder": [ext],
                             "type": "video/" + ext,
@@ -155,100 +137,11 @@
                     myVideo.play();
                     //myVideo.load();
                 });
-                function pausePlayTest() {
-                    //myVideo.on("pause", function () {
-                    //    alert('paused');
-                    //});
-
-                    ////var pausetime;
-                    ////var duration;
-                    ////var count=0;
-                    //$('.vjs-play-control').on('click', function (e) {
-                    //    console.log('Play/Pause button clicked.');
-                    //    console.log($(e.currentTarget).attr('class'));
-                    //    console.log($(e.currentTarget).hasClass('vjs-paused'));
-                    //    function countPlusOne() {
-                    //        count=count+1;
-                    //    }
-                    //    if ($(e.currentTarget).hasClass('vjs-playing')) {
-                    //        duration = myVideo.duration();
-                    //        pausetime = myVideo.currentTime();
-                    //        count = 0;
-                    //        setInterval(countPlusOne, 1000);
-                    //        console.log(pausetime)
-                    //        console.log(duration)
-                    //        console.log(count)
-                    //    }
-                    //     //myVideo.on('pause',
-                    //     //       function() {
-
-                    //     //       });
-                    //    else /*if ($(e.currentTarget).hasClass('vjs-paused')) */{
-                    //        console.log(pausetime)
-                    //        console.log(duration)
-                    //        console.log(count)
-                    //        console.log(pausetime + count)
-
-                    //        if (duration <= pausetime + count) {
-                    //            findVIdSeekTo();
-                    //            myVideo.src({
-                    //                "techOrder": ['youtube'],
-                    //                "type": "video/" + ext,
-                    //                "src": "https://www.youtube.com/watch?v=" + myVideoId,
-                    //                "youtube": { "iv_load_policy": 3 }
-                    //            });
-
-                    //            var bim = parseInt(seekToTime / 1000);
-                    //            if (bim >= 0)
-                    //                myVideo.currentTime(bim);
-                    //            myVideo.play();
-                    //        } else {
-                    //            myVideo.currentTime(pausetime + count);
-                    //            myVideo.play();
-                    //        }
-                    //        count = 0;
-                    //        console.log(count)
-                    //    }
-                    //});
-                    ////$('bigPlayButton').on('click',
-                    ////    function() {
-                    ////        findVIdSeekTo();
-                    ////        myVideo.src({
-                    ////            "techOrder": ['youtube'],
-                    ////            "type": "video/" + ext,
-                    ////            "src": "https://www.youtube.com/watch?v=" + myVideoId,
-                    ////            "youtube": { "iv_load_policy": 3 }
-                    ////        });
-
-                    ////        var bim = parseInt(seekToTime / 1000);
-                    ////        if (bim >= 0)
-                    ////            myVideo.currentTime(bim);
-                    ////        myVideo.play();
-                    ////    });
-                }
             });
 
 
         }); // jQuery(function($) END
 
-
-
-        //function handleMediaChange (mediaQueryList) {
-        //    if (mediaQueryList.matches) {
-        //        playerWidth = 660;
-        //        playerHeight = 350;
-        //    }
-        //    else {
-        //        playerWidth = 300;
-        //        playerHeight = 200;
-        //    }
-        //}
-        //// media query event handler
-        //if (matchMedia) {
-        //    const mq = window.matchMedia("(min-width: 700px)");
-        //    mq.addListener(handleMediaChange);
-        //    handleMediaChange(mq);
-        //}
 
         var width = $(window).width();
         if (width < 700) {
@@ -258,7 +151,7 @@
             playerWidth = 660;
             playerHeight = 350;
         }
-        $(window).resize(function() {
+        $(window).resize(function () {
             if ($(window).width() != width) {
                 if ($(window).width() < 700) {
                     playerWidth = 400;
@@ -273,29 +166,17 @@
 
         var ext;// = "youtube";
         var srcUri;
-        var poster = 'https://img.youtube.com/vi/aqz-KE-bpKQ/maxresdefault.jpg';
+        var poster = 'https://i.cbc.ca/1.4734813.1557524152!/fileImage/httpImage/image.jpg_gen/derivatives/16x9_780/afp-1768eq.jpg';
         var playerWidth, playerHeight;
         function loadVideo() {
 
             if (ext === "vimeo") {
-                //var options = {
-                //    id: myVideoId,
-                //    width: 640,
-                //    autoplay:1
-                //};
-                //console.log('played the video!????', myVideoId);
-
-                //var player = new Vimeo.Player('divId', options);
-                //player.setVolume(100);
-
-                //player.on('play', function () {
-                //    console.log('played the video!');
-                //});
+               
                 document.getElementById('divId').innerHTML = '<iframe src="//player.vimeo.com/video/' + myVideoId + '?autoplay=1#t=' + parseInt(seekToTime / 1000) +
                     ' title=1&amp;byline=1&amp;portrait=1" width="' + playerWidth + '" height="' + playerHeight + '" frameborder="0" allow="autoplay" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
 
                 var iframe = document.querySelector('iframe');
-                var player = new Vimeo.Player(iframe, {controls:0});
+                var player = new Vimeo.Player(iframe, { controls: 0 });
 
                 player.on('play', function () {
                     console.log('Played the video', playerWidth, playerHeight);
@@ -304,28 +185,24 @@
                 player.getVideoTitle().then(function (title) {
                     console.log('title:', title);
                 });
-                //TODO player.ended 
+                //TODO player.ended
                 //TODO try to load without iframe here
                 player.on('ended', function () {
                     findVIdSeekTo();
                     loadVideo();
                 });
 
-                //$('#divId').html('<iframe src="http://player.vimeo.com/video/'+myVideoId +'?
-                //title=1&amp;byline=1&amp;portrait=1" width="643"
-                //height="360" frameborder="0"></iframe>');
             }
 
             myVideo.src(
                 {
-                    "techOrder": [ext],
-                    "type": "video/" + ext,
+                    "techOrder": ['youtube'],
+                    "type": "video/youtube",
                     "src": srcUri + myVideoId,
-                    ext: { "iv_load_policy": 1 },
+                    "youtube" : { "iv_load_policy": 3 },
                     "fluid": true
                 }
             );
-
             if (poster) myVideo.poster(poster);
             myVideo.on('loadedmetadata', function () {
                 var bim = parseInt(seekToTime / 1000);
@@ -336,53 +213,39 @@
         }
 
         function findVIdSeekTo() {
-            //console.log(result);
-            //result.forEach(findVideoAndSeekTo);
             for (var i = 0; i < result.length; i++) {
-                if (moment(Date.now()).isBetween(result[i]["startTime"], result[i]["endTime"])) {
-                    seekToTime = moment(Date.now()).diff(moment(result[i]["startTime"]));
+                if (moment(Date.now())/*.utcOffset('+1000')*/.isBetween(result[i]["startTime"], result[i]["endTime"])) {
+                    seekToTime = moment(Date.now()).utcOffset('+1000').diff(moment(result[i]["startTime"]));
                     myVideoId = result[i]["videoId"];
                     ext = result[i]["srcExtention"];
                     srcUri = result[i]["srcUri"];
                     console.log(seekToTime, 'in findVIdSeekTo()');
                     console.log(myVideoId, 'in findVIdSeekTo()');
                 } else {
-                    if (moment(Date.now()).isBefore(result[i]["startTime"])) {
-                        futureVideoList[futureVideoList.length] = moment(result[i]["startTime"]).diff(moment(Date.now()));
+                    if (moment(Date.now())/*.utcOffset('+1000')*/.isBefore(result[i]["startTime"])) {
+                        futureVideoList[futureVideoList.length] = moment(result[i]["startTime"]).diff(moment(Date.now())/*.utcOffset('+1000')*/);
                     }
                 }
             }
             //console.log(Math.round(futureVideoList[0] / 60000));
             //remainTimeToNextVideo = futureVideoList[0];
             //console.log(remainTimeToNextVideo)
-            console.log('here in findfideoidseekto')
+            console.log('here in findfideoidseekto');
         }
 
         function findVideoAndSeekTo(item, index) {
-            if (moment(Date.now()).isBetween(item["startTime"], item["endTime"])) {
-                seekToTime = moment(Date.now()).diff(moment(item["startTime"]));
+            if (moment(Date.now())/*.utcOffset('+1000')*/.isBetween(item["startTime"], item["endTime"])) {
+                seekToTime = moment(Date.now())/*.utcOffset('+1000')*/.diff(moment(item["startTime"]));
                 myVideoId = item["videoId"];
                 console.log(seekToTime, 'in function in if isbetween');
                 console.log(myVideoId, 'in function in if isbetween');
             }
             if (myVideoId == undefined) {
-                if (moment(Date.now()).isBefore(item["startTime"])) {
-                    futureVideoList.push(moment(item["startTime"]).diff(moment(Date.now())));
+                if (moment(Date.now())/*.utcOffset('+1000')*/.isBefore(item["startTime"])) {
+                    futureVideoList.push(moment(item["startTime"]).diff(moment(Date.now())/*.utcOffset('+1000')*/));
                 }
             }
         }
-
-                                                            //var vdId = "TwBWz6Sf5rs";
-                                                            //var divId = document.getElementById("divId");
-                                                            //var outPut = '<video id="vid1" class="video-js vjs-default-skin vjs-big-play-centered" controls autoplay width="640" height="350" '
-                                                            //outPut += 'data-setup=\'{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "https://www.youtube.com/watch?v=' + myVideoId + '"}] }\'>';
-
-                                                            //divId.innerHTML = outPut;
-
-
-
-                                                            //myVideo.currentTime(120);
-                                                            //myVideo.play();
     </script>
 
 

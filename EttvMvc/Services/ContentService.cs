@@ -26,6 +26,7 @@ namespace EttvMvc.Services
             HttpClient client = new HttpClient();
             //client.BaseAddress = new Uri("https://localhost:44384/Api/");
             client.BaseAddress = new Uri("https://ettv.azurewebsites.net/api/");
+            //client.BaseAddress = new Uri("http://localhost:5000/api/");
             HttpResponseMessage response = client.GetAsync("VideoContent").Result;
 
             List<VideoContent> results = new List<VideoContent>();
@@ -48,6 +49,7 @@ namespace EttvMvc.Services
                 HttpClient client = new HttpClient();
                 //client.BaseAddress = new Uri("https://localhost:44384/Api/");
                 client.BaseAddress = new Uri("https://ettv.azurewebsites.net/api/");
+                //client.BaseAddress = new Uri("http://localhost:5000/api/");
                 string JsonString = JsonConvert.SerializeObject(model);
                 StringContent content = new StringContent(JsonString, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = client.PostAsync("VideoContent/", content).Result;
@@ -82,6 +84,7 @@ namespace EttvMvc.Services
                     HttpClient client = new HttpClient();
                     //client.BaseAddress = new Uri("https://localhost:44384/api/");
                     client.BaseAddress = new Uri("https://ettv.azurewebsites.net/api/");
+                    //client.BaseAddress = new Uri("http://localhost:5000/api/");
                     string JsonString = JsonConvert.SerializeObject(model);
                     StringContent content = new StringContent(JsonString, Encoding.UTF8, "application/json");
                     HttpResponseMessage response = client.PutAsync("VideoContent/" + model.VideoId, content).Result;
@@ -108,6 +111,7 @@ namespace EttvMvc.Services
                 HttpClient client = new HttpClient();
                 //client.BaseAddress = new Uri("https://localhost:44384/api/");
                 client.BaseAddress = new Uri("https://ettv.azurewebsites.net/api/");
+                //client.BaseAddress = new Uri("http://localhost:5000/api/");
                 HttpResponseMessage response = client.DeleteAsync("VideoContent/" + id).Result;
 
                 if (response.IsSuccessStatusCode)
@@ -148,6 +152,7 @@ namespace EttvMvc.Services
 
                 newVC.VideoId = videoListResponse.Items[0].Id.ToString();
                 newVC.Title = videoListResponse.Items[0].Snippet.Title.ToString();
+                //TODO if there is no tag !!!
                 newVC.Tag = videoListResponse.Items[0].Snippet.Tags[0].ToString();
                 newVC.Duration = convertYouTubeDuration(videoListResponse.Items[0].ContentDetails.Duration);
                 newVC.Thumbnail = videoListResponse.Items[0].Snippet.Thumbnails.Default__.Url.ToString();

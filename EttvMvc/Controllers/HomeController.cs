@@ -17,13 +17,21 @@ namespace EttvMvc.Controllers
         }
         public ActionResult Index()
         {
-            IEnumerable<ChannelProgram> chp = _channelProgramService.GetAll().Where(c => c.StartTime.Day <= DateTime.Now.Day).OrderBy(x=>x.StartTime);
+            DateTime testDate = Convert.ToDateTime(TempData["myDatetimeData"]);
+            ViewBag.myDatetimeBag = testDate;
+
+            IEnumerable<ChannelProgram> chp = _channelProgramService.GetAll().Where(c => c.StartTime.Day <= testDate.Day).OrderBy(x=>x.StartTime);
             return View(chp);
         }
 
-        public JsonResult GetIndexContentJsonResult()
+        public JsonResult GetIndexContentJsonResult(string now)
         {
-            IEnumerable<ChannelProgram> chp = _channelProgramService.GetAll().Where(c => c.StartTime.Day <= DateTime.Now.Day);
+            double ticks = double.Parse(now);
+            TimeSpan time = TimeSpan.FromMilliseconds(ticks);
+            DateTime myDateTime = new DateTime(1970, 1, 1) + time;
+            TempData["myDatetimeData"] = myDateTime;
+
+            IEnumerable<ChannelProgram> chp = _channelProgramService.GetAll().Where(c => c.StartTime.Day <= myDateTime.Day);
             return new JsonResult{Data = chp, JsonRequestBehavior = JsonRequestBehavior.AllowGet};
         }
 

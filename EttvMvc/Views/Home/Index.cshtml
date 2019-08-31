@@ -93,7 +93,7 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        if (item.StartTime.Date == DateTime.Now.Date)
+                        if (item.StartTime.Date == ViewBag.myDatetimeBag.Date)
                         {
                             <tr>
                                 <td>@item.VideoContent.Title</td>
@@ -106,4 +106,21 @@
         </div>
     </div>
 </section>
+
+@section Scripts{
+    <script>
+        $(function() {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Index", "Home")',
+                dataType: 'json',
+                data: '{now:' + Date.now() + '}',
+                contentType: "application/json; charset=utf-8",
+                success: function(data) {
+                    console.log(data, "from home index, Todays Program list");
+                }
+            });
+        });
+    </script>
+}
 
